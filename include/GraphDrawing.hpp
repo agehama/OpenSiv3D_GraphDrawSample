@@ -1683,12 +1683,6 @@ namespace s3d
 			m_converged = false;
 			m_failed = false;
 
-			// シードごとに同じ結果になるようにinit()で初期化したときと乱数の呼び出し回数を合わせる
-			for (size_t i = 1; i < m_initRandomCount; ++i)
-			{
-				const double volatile t = Random();
-			}
-
 			if (m_coarserGraph)
 			{
 				auto P_T = m_prolongationMatrix;
@@ -1716,7 +1710,7 @@ namespace s3d
 		template <class URBG>
 		void makeCoarseGraphSeries(URBG&& urbg)
 		{
-			coarsenByEC(std::forward<URBG>(urbg));
+			coarsenByEC();
 
 			const double threshold = 0.75;
 			if (1.0 * m_coarserGraph->nodeCount() / nodeCount() > threshold)
@@ -1755,8 +1749,7 @@ namespace s3d
 			}
 		}
 
-		template <class URBG>
-		void coarsenByEC(URBG&& urbg)
+		void coarsenByEC()
 		{
 			m_coarserGraph = std::make_unique<LayoutForceDirected>();
 
@@ -1770,8 +1763,8 @@ namespace s3d
 
 			Array<GraphEdge::IndexType> visitingVertices(nodeCount());
 			std::iota(visitingVertices.begin(), visitingVertices.end(), 0);
-			visitingVertices.shuffle(std::forward<URBG>(urbg));
-			m_initRandomCount = visitingVertices.size();
+
+			visitingVertices.shuffle(m_rng);
 
 			struct RowVal
 			{
@@ -2314,8 +2307,7 @@ namespace s3d
 		double m_currentProgressRate = 0.0;
 
 
-		// reset時に使う
-		size_t m_initRandomCount = 0;
+		DefaultRNG m_rng = DefaultRNG{ 0 };
 
 
 		Array<GraphEdge::IndexType> m_originalNodeIndices;
