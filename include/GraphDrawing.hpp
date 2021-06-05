@@ -1,4 +1,3 @@
-
 # include <Siv3D.hpp> // OpenSiv3D v0.6.0
 
 namespace s3d
@@ -1121,6 +1120,26 @@ namespace s3d
 			return m_connectedComponents.size();
 		}
 
+		Array<ConnectedGraph>::iterator begin() noexcept
+		{
+			return m_connectedComponents.begin();
+		}
+
+		Array<ConnectedGraph>::const_iterator begin() const noexcept
+		{
+			return m_connectedComponents.begin();
+		}
+
+		Array<ConnectedGraph>::iterator end() noexcept
+		{
+			return m_connectedComponents.end();
+		}
+
+		Array<ConnectedGraph>::const_iterator end() const noexcept
+		{
+			return m_connectedComponents.end();
+		}
+
 	private:
 
 		void loadDecomposed(Array<GraphEdge>& edges)
@@ -1172,7 +1191,7 @@ namespace s3d
 
 		// 自動停止フラグ
 		//  true だと収束条件を満たしたらシミュレーションを終了する
-		//  完了後も頂点の移動を行う場合は　false　に設定する
+		//  完了後も頂点の移動を行う場合は false に設定する
 		bool autoSuspend = true;
 
 		// 初期タイムステップ幅
