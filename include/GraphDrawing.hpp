@@ -1173,6 +1173,9 @@ namespace s3d
 
 	struct ForceDirectedConfig
 	{
+		// 即座に計算を行うか
+		StartImmediately startImmediately = StartImmediately::No;
+
 		// ノード同士の斥力がどれだけ遠くまで働くかを決める値
 		//  小さいと遠距離間のノードも影響し合う [2.0, 3.0] くらい
 		double repulsiveExponent = 2.5;
@@ -1258,6 +1261,11 @@ namespace s3d
 			std::iota(m_originalNodeIndices.begin(), m_originalNodeIndices.end(), 0);
 
 			makeCoarseGraphSeries(std::forward<URBG>(urbg));
+
+			if (config.startImmediately)
+			{
+				update(-1);
+			}
 
 			setDefaultDrawArea();
 		}
