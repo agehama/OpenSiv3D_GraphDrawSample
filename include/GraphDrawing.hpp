@@ -686,6 +686,11 @@ namespace s3d
 				m_drawCenter = rect.center();
 			}
 
+			void setDefaultDrawArea()
+			{
+				setDrawArea(Scene::Rect().stretched(-50));
+			}
+
 		protected:
 
 			[[nodiscard]]
@@ -1253,6 +1258,8 @@ namespace s3d
 			std::iota(m_originalNodeIndices.begin(), m_originalNodeIndices.end(), 0);
 
 			makeCoarseGraphSeries(std::forward<URBG>(urbg));
+
+			setDefaultDrawArea();
 		}
 
 		template <class URBG>
@@ -2338,6 +2345,8 @@ namespace s3d
 			}
 
 			m_adjacencyMatrix = detail::SparseMat<float>{ connectedGraph.edges() };
+
+			setDefaultDrawArea();
 		}
 
 		void draw(const IGraphVisualizer& visualizer) const
