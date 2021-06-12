@@ -1757,6 +1757,7 @@ namespace s3d
 			if (m_coarserGraph->nodeCount() < minNodeCount || m_coarserGraph->nodeCount() == nodeCount())
 			{
 				m_coarserGraph.reset();
+				prepareSimulation();
 			}
 			else if (minNodeCount < m_coarserGraph->nodeCount())
 			{
