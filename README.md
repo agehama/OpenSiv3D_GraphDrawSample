@@ -16,7 +16,7 @@ OpenSiv3D でグラフ描画を行うサンプルとチュートリアルです�
 ここで円形にノードを配置する座標が計算されます。
 
 その後 `layout.draw()` を呼んで画面にグラフを描画します。
-このとき、 `LayoutCircular` はグラフの配置情報しか持たないので、引数に `BasicGraphVisualizer` クラスを与えて色や大きさなど描画の方法を指定します。
+このとき、`LayoutCircular` はグラフの配置情報しか持たないので、引数に `BasicGraphVisualizer` クラスを与えて色や大きさなど描画の方法を指定します。
 
 ```cpp
 void Main()
@@ -48,10 +48,9 @@ void Main()
 
 今度は `LayoutForceDirected` クラスに `ConnectedGraph` を渡して  ForceDirected レイアウトを行います。
 
-`LayoutForceDirected` は力学的シミュレーションを行うため、グラフの規模が大きいと計算に時間がかかります。
-したがって、レイアウトの計算は通常 `layout.update()` を呼んだタイミングでのみ行われます。
+`LayoutForceDirected` のレイアウト計算は複雑なグラフに対して時間がかかるため、Circular レイアウトと異なり通常は `layout.update()` を呼んだタイミングでのみ行われます。
 
-ここでは、例として簡単なグラフを扱うので、設定に `.startImmediately = StartImmediately::Yes` を指定して座標計算をその場で実行します（複雑なグラフをループで少しずつ計算する方法は [3 応用編 インタラクティブな描画](#3-応用編-インタラクティブな描画) を参照してください。）
+ここでは、例として簡単なグラフを扱うので、設定に `.startImmediately = StartImmediately::Yes` を指定してレイアウト計算をその場で実行します（複雑なグラフをループで少しずつ計算する方法は [3 応用編 インタラクティブな描画](#3-応用編-インタラクティブな描画) を参照してください。）
 
 ```cpp
 void Main()
@@ -74,6 +73,7 @@ void Main()
 	}
 }
 ```
+
 <p align="center">
   <img alt="tutorial_1_2" src="https://user-images.githubusercontent.com/4939010/121796483-50367f00-cc54-11eb-912d-d14b16025eb7.png" width="60%">
 </p>
@@ -92,7 +92,7 @@ void Main()
 ```cpp
 void Main()
 {
-	const GraphLoader loader(U"example.mtx");
+	const GraphLoader loader(U"primitives.mtx");
 
 	const ForceDirectedConfig config{
 		.startImmediately = StartImmediately::Yes,
@@ -114,7 +114,7 @@ void Main()
 
 		layout.draw(BasicGraphVisualizer{});
 
-		font(U"グラフ", index, U"（Space キーでグラフを切り替える）").draw(0, 0, Palette::Yellow);
+		font(U"グラフ", index + 1, U"/", loader.size(), U"（Space キーでグラフを切り替える）").draw(0, 0, Palette::Yellow);
 	}
 }
 ```
@@ -124,6 +124,8 @@ void Main()
 ### (1) Rect で指定した範囲に描画する
 
 `layout.setDrawArea()` で描画する範囲を指定することができます。
+
+例として `Rect` の端を掴んで描画範囲を動かせるプログラムを作ってみます。
 
 ```cpp
 void Main()
@@ -201,8 +203,8 @@ void Main()
 +	BasicGraphVisualizer visualizer{ 15, 5, Color(U"#7adb6b"), Color(U"#e5da9a") };
 ```
 
-今のままだと一番外側のノードの中心座標に合わせて描画範囲がセットされるので、描画したときに外側のノードが半径分はみ出ています。
-描画範囲にぴったり収めるには `Rect` をノードの半径分縮めて `layout.setDrawArea()` に渡します。
+また、`layout.setDrawArea()` は渡された `Rect` にノードの中心座標を揃えるため、(1) のプログラムは描画したときに外側のノードがはみ出ています。
+これを描画範囲にぴったり収めるにはノードの半径分縮めた `Rect` を `layout.setDrawArea()` に渡すようにします。
 ```diff
 -		layout.setDrawArea(rect);
 +		layout.setDrawArea(rect.stretched(-visualizer.m_nodeRadius));
