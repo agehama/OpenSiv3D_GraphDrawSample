@@ -119,6 +119,10 @@ void Main()
 }
 ```
 
+<p align="center">
+  <img alt="tutorial_1_3" src="https://user-images.githubusercontent.com/4939010/121870409-fca06000-cd3d-11eb-912a-11eca0e95348.gif" width="60%">
+</p>
+
 ## 2 配置と描画
 
 ### (1) Rect で指定した範囲に描画する
