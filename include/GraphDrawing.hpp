@@ -1297,7 +1297,9 @@ namespace s3d
 				{
 					simulateOneStep();
 
-					if (m_config.autoSuspend && m_converged || maxUpdateMillisec == 0)
+					// maxUpdateMillisec == -1 の時は config.autoSuspend にかかわらず収束したら停止する
+					const bool autoSuspend = maxUpdateMillisec < 0 || m_config.autoSuspend;
+					if (autoSuspend && m_converged || maxUpdateMillisec == 0)
 					{
 						break;
 					}
