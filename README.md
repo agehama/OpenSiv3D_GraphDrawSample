@@ -277,14 +277,7 @@ public:
 
 	while (System::Update())
 	{
-+		if (KeyLeft.pressed())
-+		{
-+			angle -= 1_deg;
-+		}
-+		else if (KeyRight.pressed())
-+		{
-+			angle += 1_deg;
-+		}
++		angle += Mouse::Wheel()*0.1;
 
 +		const Transformer2D t(Mat3x2::Rotate(angle, Scene::Center()), TransformCursor::Yes);
 
@@ -295,4 +288,45 @@ public:
   <img alt="tutorial_2_4" src="https://user-images.githubusercontent.com/4939010/121796414-bff83a00-cc53-11eb-8c99-e228225006aa.png" width="60%">
 </p>
 
+### (5) レイアウトを固定する
+
+`LayoutForceDirected` は乱数を使うため実行するたびに異なるレイアウトに収束します。
+予め乱数のシードを固定することで、同じレイアウトを再現することが可能です。
+
+```diff
++	GetDefaultRNG().seed(0); // シード値を0に設定
+	auto layout = LayoutForceDirected{ loader[0], config };
+```
+
+
 ## 3 応用編 インタラクティブな描画
+
+### (1) ループでグラフをレイアウトする
+
+```
+void Main()
+{
+	const GraphLoader loader{ U"sierpinski.txt" };
+
+	BasicGraphVisualizer visualizer{0};
+
+	ForceDirectedConfig config
+	{
+		.autoSuspend = false,
+	};
+
+	GetDefaultRNG().seed(0);
+
+	LayoutForceDirected graph{ loader[0], config };
+
+	while (System::Update())
+	{
+		graph.update(1);
+
+		graph.setDrawArea(Scene::Rect().stretched(-50));
+
+		graph.draw(visualizer);
+	}
+}
+
+```
