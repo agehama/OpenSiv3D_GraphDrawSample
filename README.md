@@ -92,7 +92,7 @@ void Main()
 ```cpp
 void Main()
 {
-	const GraphLoader loader(U"primitives.mtx");
+	const GraphLoader loader(U"example/primitives.mtx");
 
 	const ForceDirectedConfig config{
 		.startImmediately = StartImmediately::Yes,
@@ -134,7 +134,7 @@ void Main()
 ```cpp
 void Main()
 {
-	const GraphLoader loader{ U"example1.txt" };
+	const GraphLoader loader{ U"example/simpleGraph.txt" };
 
 	auto layout = LayoutForceDirected{ loader[0], ForceDirectedConfig{ .startImmediately = StartImmediately::Yes } };
 
@@ -202,16 +202,24 @@ void Main()
 `BasicGraphVisualizer` の引数にノードの半径、エッジの太さ、ノードの色、エッジの色を指定することができます。
 
 ```diff
+	RectF rect = Scene::Rect().stretched(-100);
+
 -	const BasicGraphVisualizer visualizer;
 +	Scene::SetBackground(Color(U"#f7f1cf"));
 +	BasicGraphVisualizer visualizer{ 15, 5, Color(U"#7adb6b"), Color(U"#e5da9a") };
+
+	while (System::Update())
 ```
 
 また、`layout.setDrawArea()` は渡された `Rect` にノードの中心座標を揃えるため、(1) のプログラムは描画したときに外側のノードがはみ出ています。
 これを描画範囲にぴったり収めるにはノードの半径分縮めた `Rect` を `layout.setDrawArea()` に渡すようにします。
 ```diff
+		}
+
 -		layout.setDrawArea(rect);
 +		layout.setDrawArea(rect.stretched(-visualizer.m_nodeRadius));
+
+		rect.drawFrame(2.0);
 ```
 
 <p align="center">
@@ -259,8 +267,11 @@ public:
 そして `visualizer` を上で定義した `LabelGraphVisualizer` に置き換えます。
 
 ```diff
+	Scene::SetBackground(Color(U"#f7f1cf"));
 -	BasicGraphVisualizer visualizer{ 15, 5, Color(U"#7adb6b"), Color(U"#e5da9a") };
 +	LabelGraphVisualizer visualizer{ Font{16, Typeface::Heavy }, Color(U"#f7f1cf"), 15, 5, Color(U"#7adb6b"), Color(U"#e5da9a") };
+
+	while (System::Update())
 ```
 
 <p align="center">
@@ -277,8 +288,9 @@ public:
 
 	while (System::Update())
 	{
-+		angle += Mouse::Wheel()*0.1;
-
++		// マウスホイールで回転する
++		angle += Mouse::Wheel() * 0.1;
++
 +		const Transformer2D t(Mat3x2::Rotate(angle, Scene::Center()), TransformCursor::Yes);
 
 		const Circle cursorCircle{ Cursor::Pos(), 30.0 };
@@ -294,39 +306,335 @@ public:
 予め乱数のシードを固定することで、同じレイアウトを再現することが可能です。
 
 ```diff
+	const GraphLoader loader{ U"example/simpleGraph.txt" };
+
 +	GetDefaultRNG().seed(0); // シード値を0に設定
-	auto layout = LayoutForceDirected{ loader[0], config };
+
+	auto layout = LayoutForceDirected{ loader[0], ForceDirectedConfig{.startImmediately = StartImmediately::Yes } };
 ```
 
+### チュートリアル2 ソースコード全体
+
+```cpp
+#include <Siv3D.hpp> // OpenSiv3D v0.6
+
+#include "include/GraphDrawing.hpp"
+
+class LabelGraphVisualizer : public BasicGraphVisualizer
+{
+public:
+
+	explicit LabelGraphVisualizer(const Font& font, ColorF fontColor, double nodeRadius = 10.0, double edgeThickness = 1.0, ColorF nodeColor = Palette::White, ColorF edgeColor = ColorF(0.8))
+		: BasicGraphVisualizer{ nodeRadius, edgeThickness, nodeColor, edgeColor }
+		, m_labelFont(font)
+		, m_labelColor(fontColor)
+	{}
+
+	virtual ~LabelGraphVisualizer() = default;
+
+	virtual void drawNode(const Vec2& pos, GraphEdge::IndexType nodeIndex) const override
+	{
+		pos.asCircle(m_nodeRadius).draw(m_nodeColor);
+		m_labelFont(nodeIndex).drawAt(pos, m_labelColor);
+	}
+
+	virtual void drawEdge(const Line& line, GraphEdge::IndexType, GraphEdge::IndexType) const override
+	{
+		line.draw(LineStyle::RoundDot, m_edgeThickness, m_edgeColor);
+	}
+
+	Font m_labelFont;
+
+	ColorF m_labelColor;
+};
+
+void Main()
+{
+	const GraphLoader loader{ U"example/simpleGraph.txt" };
+
+	GetDefaultRNG().seed(0); // シード値を0に設定
+
+	auto layout = LayoutForceDirected{ loader[0], ForceDirectedConfig{.startImmediately = StartImmediately::Yes } };
+
+	RectF rect = Scene::Rect().stretched(-100);
+
+	Scene::SetBackground(Color(U"#f7f1cf"));
+	LabelGraphVisualizer visualizer{ Font{16, Typeface::Heavy }, Color(U"#f7f1cf"), 15, 5, Color(U"#7adb6b"), Color(U"#e5da9a") };
+
+	double angle = 30_deg;
+
+	while (System::Update())
+	{
+		// マウスホイールで回転する
+		angle += Mouse::Wheel() * 0.1;
+
+		const Transformer2D t(Mat3x2::Rotate(angle, Scene::Center()), TransformCursor::Yes);
+
+		const Circle cursorCircle{ Cursor::Pos(), 30.0 };
+
+		const bool mouseOverLeft = rect.left().intersects(cursorCircle);
+		const bool mouseOverRight = rect.right().intersects(cursorCircle);
+		const bool mouseOverTop = rect.top().intersects(cursorCircle);
+		const bool mouseOverBottom = rect.bottom().intersects(cursorCircle);
+
+		Cursor::SetDefaultStyle(CursorStyle::Default);
+
+		if (mouseOverLeft || mouseOverRight)
+		{
+			Cursor::SetDefaultStyle(CursorStyle::ResizeLeftRight);
+		}
+		else if (mouseOverTop || mouseOverBottom)
+		{
+			Cursor::SetDefaultStyle(CursorStyle::ResizeUpDown);
+		}
+
+		if (MouseL.pressed())
+		{
+			if (mouseOverLeft)
+			{
+				rect = RectF(Arg::bottomRight = rect.br(), rect.br().x - Cursor::Pos().x, rect.h);
+			}
+			else if (mouseOverRight)
+			{
+				rect = RectF(Arg::topLeft = rect.tl(), Cursor::Pos().x - rect.tl().x, rect.h);
+			}
+			else if (mouseOverTop)
+			{
+				rect = RectF(Arg::bottomRight = rect.br(), rect.w, rect.br().y - Cursor::Pos().y);
+			}
+			else if (mouseOverBottom)
+			{
+				rect = RectF(Arg::topLeft = rect.tl(), rect.w, Cursor::Pos().y - rect.tl().y);
+			}
+		}
+
+		layout.setDrawArea(rect.stretched(-visualizer.m_nodeRadius));
+
+		rect.drawFrame(2.0);
+
+		layout.draw(visualizer);
+	}
+}
+```
 
 ## 3 応用編 インタラクティブな描画
 
+ForceDirected レイアウトを使ってグラフの配置をインタラクティブに編集するアプリケーションを作ってみます。
+
 ### (1) ループでグラフをレイアウトする
 
-```
+これまでは全て初期化時にレイアウトの計算を行っていました。
+しかし、規模の大きいグラフ（ノード数が10000以上）になるとレイアウトの計算が完了するまでに数十秒かかることもあります。
+
+このような場合、初期化時に計算を行わずにループの中で `layout.update()` を呼ぶことで、描画を更新しながらレイアウトの計算を行うことができます。
+`layout.update()` の引数には、計算に使う時間をミリ秒で指定します。
+他に重い処理がないプログラムであれば、`16` ミリ秒としておけば 60FPS を維持しながら計算を進めます。
+
+また、これまでは `layout.setDrawArea()` は最初に一度呼んだきりでしたが、レイアウトが更新されるたびに座標が変わるので呼びなおす必要があります。
+
+```cpp
 void Main()
 {
-	const GraphLoader loader{ U"sierpinski.txt" };
+	const GraphLoader loader{ U"example/sierpinski.txt" };
 
-	BasicGraphVisualizer visualizer{0};
+	const double nodeRadius = 7;
+	BasicGraphVisualizer visualizer{ nodeRadius };
+
+	GetDefaultRNG().seed(0);
+
+	LayoutForceDirected layout{ loader[0], ForceDirectedConfig{} };
+
+	while (System::Update())
+	{
+		layout.update(16);
+
+		layout.setDrawArea(Scene::Rect().stretched(-50));
+
+		layout.draw(visualizer);
+	}
+}
+```
+
+<p align="center">
+  <img alt="tutorial_3_1" src="https://user-images.githubusercontent.com/4939010/122638885-bda14e80-d131-11eb-9c53-bcfb083209db.png" width="60%">
+</p>
+
+### (2) ノードのマウスクリックを実装する
+
+ノードの現在位置は `layout.activeNodePositions()` で取得することができます。
+
+これを使ってクリックされたノードのインデックスを表示する機能を追加します。
+
+```diff
+void Main()
+{
++	const Font font(16, Typeface::Heavy);
++
++	Optional<GraphEdge::IndexType> clickedNode;
+
+	const GraphLoader loader{ U"example/sierpinski.txt" };
+```
+
+```diff
+	while (System::Update())
+	{
+		layout.update(16);
+
+		layout.setDrawArea(Scene::Rect().stretched(-50));
+
+		layout.draw(visualizer);
+
++		for (auto& [nodeIndex, nodePos] : layout.activeNodePositions())
++		{
++			const auto nodeCircle = nodePos.asCircle(nodeRadius);
++
++			if (nodeCircle.leftClicked())
++			{
++				clickedNode = nodeIndex;
++			}
++
++			if (clickedNode == nodeIndex)
++			{
++				nodeCircle.draw(Palette::Orange);
++
++				const auto labelPos = nodePos + Circular{ 20, 30_deg };
++				font(nodeIndex).draw(labelPos + Vec2{ 1, 1 }, Palette::Black);
++				font(nodeIndex).draw(labelPos, Palette::Orange);
++			}
++		}
+	}
+```
+
+<p align="center">
+  <img alt="tutorial_3_2" src="https://user-images.githubusercontent.com/4939010/122639035-a020b480-d132-11eb-9194-ca688f32726c.gif" width="60%">
+</p>
+
+
+### (3) マウスでドラッグしてノードを動かす
+
+ノードのクリック判定が取れるようになったので、次はクリックしたノードの座標をカーソル位置に移動するようにします。
+
+まず `config.autoSuspend` を `false` にしてレイアウトが完了しても座標更新を続けるようにします。
+そして `config.updateFunction` にはレイアウト計算でそれぞれのノードに対して呼ばれる座標更新関数を設定することができます。
+これにクリック中のノードの座標をカーソル位置に移動する処理を加えましょう。
+
+```diff
+	GetDefaultRNG().seed(0);
+
+-	LayoutForceDirected layout{ loader[0], ForceDirectedConfig{} };
++	ForceDirectedConfig config
++	{
++		.autoSuspend = false,
++		.initialTimeStep = 0.01, // クリック時の見た目のぶれを小さくするため
++	};
++
++	config.updateFunction = [&](GraphEdge::IndexType nodeIndex, const Vec2& /*oldPos*/, const Vec2& newPos)
++	{
++		if (clickedNode && clickedNode.value() == nodeIndex)
++		{
++			return Cursor::PosF();
++		}
++
++		return newPos;
++	};
++
++	LayoutForceDirected layout{ loader[0], config };
+```
+
+あとはマウスを離したときに `clickedNode` をリセットする処理を入れればドラッグ移動ができるようになります。
+
+ただし、これだけだとドラッグしながら描画範囲から出た時に `layout.setDrawArea()` で全体を縮小する処理が連続して走ってしまうため、ドラッグ中は `layout.setDrawArea()` が呼ばれないように変更します。
+
+```diff
+	while (System::Update())
+	{
+		layout.update(16);
+		
+-		layout.setDrawArea(Scene::Rect().stretched(-50));
++		if (!MouseL.pressed())
++		{
++			clickedNode = none;
++
++			layout.setDrawArea(Scene::Rect().stretched(-50));
++		}
+
+		layout.draw(visualizer);
+```
+
+<p align="center">
+  <img alt="tutorial_3_3" src="https://user-images.githubusercontent.com/4939010/122639262-ee828300-d133-11eb-8723-736e7d22b1a3.gif" width="60%">
+</p>
+
+
+### チュートリアル3 ソースコード全体
+
+```cpp
+#include <Siv3D.hpp> // OpenSiv3D v0.6
+
+#include "include/GraphDrawing.hpp"
+
+void Main()
+{
+	const Font font(16, Typeface::Heavy);
+
+	Optional<GraphEdge::IndexType> clickedNode;
+
+	const GraphLoader loader{ U"example/sierpinski.txt" };
+
+	const double nodeRadius = 7;
+	BasicGraphVisualizer visualizer{ nodeRadius };
+
+	GetDefaultRNG().seed(0);
 
 	ForceDirectedConfig config
 	{
 		.autoSuspend = false,
+		.initialTimeStep = 0.01, // クリック時の見た目のぶれを小さくするため
 	};
 
-	GetDefaultRNG().seed(0);
+	config.updateFunction = [&](GraphEdge::IndexType nodeIndex, const Vec2& /*oldPos*/, const Vec2& newPos)
+	{
+		if (clickedNode && clickedNode.value() == nodeIndex)
+		{
+			return Cursor::PosF();
+		}
 
-	LayoutForceDirected graph{ loader[0], config };
+		return newPos;
+	};
+
+	LayoutForceDirected layout{ loader[0], config };
 
 	while (System::Update())
 	{
-		graph.update(1);
+		layout.update(16);
 
-		graph.setDrawArea(Scene::Rect().stretched(-50));
+		if (!MouseL.pressed())
+		{
+			clickedNode = none;
 
-		graph.draw(visualizer);
+			layout.setDrawArea(Scene::Rect().stretched(-50));
+		}
+
+		layout.draw(visualizer);
+
+		for (auto& [nodeIndex, nodePos] : layout.activeNodePositions())
+		{
+			const auto nodeCircle = nodePos.asCircle(nodeRadius);
+
+			if (nodeCircle.leftClicked())
+			{
+				clickedNode = nodeIndex;
+			}
+
+			if (clickedNode == nodeIndex)
+			{
+				nodeCircle.draw(Palette::Orange);
+
+				const auto labelPos = nodePos + Circular{ 20, 30_deg };
+				font(nodeIndex).draw(labelPos + Vec2{ 1, 1 }, Palette::Black);
+				font(nodeIndex).draw(labelPos, Palette::Orange);
+			}
+		}
 	}
 }
-
 ```
