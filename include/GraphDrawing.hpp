@@ -1245,20 +1245,21 @@ namespace s3d
 
 			Array<detail::SparseEntry<float>> points(Arg::reserve = (connectedGraph.nodeCount() * 2));
 
+			m_originalNodeIndices.resize(connectedGraph.nodeCount());
+
 			for (auto i : step(static_cast<GraphEdge::IndexType>(connectedGraph.nodeCount())))
 			{
 				const auto v = static_cast<Vector2D<float>>(RandomVec2(Circle{ Vec2::Zero(), m_config.initialRadius }, std::forward<URBG>(urbg)));
 				points.emplace_back(0, i, v.x);
 				points.emplace_back(1, i, v.y);
+
+				m_activeNodeIndices[i] = m_originalNodeIndices[i] = i;
 			}
 
 			m_positions = detail::SparseMat<float>{ points };
 			m_oldPositions = m_positions;
 
 			m_adjacencyMatrix = detail::SparseMat<float>{ connectedGraph.edges() };
-
-			m_originalNodeIndices.resize(connectedGraph.nodeCount());
-			std::iota(m_originalNodeIndices.begin(), m_originalNodeIndices.end(), 0);
 
 			makeCoarseGraphSeries(std::forward<URBG>(urbg));
 
@@ -1382,20 +1383,21 @@ namespace s3d
 		// 現在処理中のグラフの情報を active~~() で取得する
 
 		[[nodiscard]]
-		Array<Vec2> activeNodePositions() const
+		Array<std::pair<GraphEdge::IndexType, Vec2>> activeNodePositions() const
 		{
 			if (isActiveDepth())
 			{
 				const Vec2 graphCenter = graphBoundingRect().center();
 
-				Array<Vec2> points(nodeCount());
+				Array<std::pair<GraphEdge::IndexType, Vec2>> points(nodeCount());
 
 				for (auto [nodeIndex, position] : IndexedRef(points))
 				{
 					const GraphEdge::IndexType internalIndex = m_positions.rowBegin(static_cast<GraphEdge::IndexType>(nodeIndex));
 					const Vec2 pos{ m_positions.getV(internalIndex), m_positions.getV(internalIndex + 1) };
 
-					position = toDrawPos(graphCenter, pos);
+					position.first = m_originalNodeIndices[nodeIndex];
+					position.second = toDrawPos(graphCenter, pos);
 				}
 
 				return points;
@@ -1421,7 +1423,7 @@ namespace s3d
 							continue;
 						}
 
-						edges.emplace_back(p0Index, p1Index);
+						edges.emplace_back(m_originalNodeIndices[p0Index], m_originalNodeIndices[p1Index]);
 					}
 				}
 
@@ -1432,26 +1434,15 @@ namespace s3d
 		}
 
 		[[nodiscard]]
-		Array<GraphEdge::IndexType> activeAdjacentNodes(GraphEdge::IndexType activeNodeIndex) const
+		Array<GraphEdge::IndexType> activeAdjacentNodes(GraphEdge::IndexType nodeIndex) const
 		{
 			if (isActiveDepth())
 			{
+				const auto activeNodeIndex = m_activeNodeIndices.at(nodeIndex);
 				return adjacentNodes(activeNodeIndex);
 			}
 
-			return m_coarserGraph->activeAdjacentNodes(activeNodeIndex);
-		}
-
-		// 現在処理中のノードインデックスを元のグラフの対応するインデックスに変換する
-		[[nodiscard]]
-		GraphEdge::IndexType originalNodeIndex(GraphEdge::IndexType activeNodeIndex) const
-		{
-			if (isActiveDepth())
-			{
-				return m_originalNodeIndices[activeNodeIndex];
-			}
-
-			return m_coarserGraph->originalNodeIndex(activeNodeIndex);
+			return m_coarserGraph->activeAdjacentNodes(nodeIndex);
 		}
 
 
@@ -1681,12 +1672,24 @@ namespace s3d
 			return nodeCount() < 1000 ? 1 : std::thread::hardware_concurrency();
 		}
 
+		// 現在処理中のノードインデックスを元のグラフの対応するインデックスに変換する
 		[[nodiscard]]
-		Array<GraphEdge::IndexType> adjacentNodes(GraphEdge::IndexType nodeIndex) const
+		GraphEdge::IndexType originalNodeIndex(GraphEdge::IndexType activeNodeIndex) const
+		{
+			if (isActiveDepth())
+			{
+				return m_originalNodeIndices[activeNodeIndex];
+			}
+
+			return m_coarserGraph->originalNodeIndex(activeNodeIndex);
+		}
+
+		[[nodiscard]]
+		Array<GraphEdge::IndexType> adjacentNodes(GraphEdge::IndexType activeNodeIndex) const
 		{
 			Array<GraphEdge::IndexType> indices;
 
-			for (GraphEdge::IndexType i = m_adjacencyMatrix.rowBegin(nodeIndex); i < m_adjacencyMatrix.rowEnd(nodeIndex); ++i)
+			for (GraphEdge::IndexType i = m_adjacencyMatrix.rowBegin(activeNodeIndex); i < m_adjacencyMatrix.rowEnd(activeNodeIndex); ++i)
 			{
 				indices.push_back(m_adjacencyMatrix.getX(i));
 			}
@@ -1832,6 +1835,7 @@ namespace s3d
 			Array<detail::SparseEntry<float>> pEntries(Arg::reserve = (m_adjacencyMatrix.rowCount() * maximalMatching.size()));
 
 			m_coarserGraph->m_originalNodeIndices.resize(maximalMatching.size());
+			m_coarserGraph->m_activeNodeIndices.clear();
 
 			for (const auto& [coarserIndex, edge] : Indexed(maximalMatching))
 			{
@@ -1841,7 +1845,10 @@ namespace s3d
 					pEntries.emplace_back(static_cast<GraphEdge::IndexType>(coarserIndex), edge.second, 1.0f);
 				}
 
-				m_coarserGraph->m_originalNodeIndices[coarserIndex] = m_originalNodeIndices[edge.first];
+				const auto originalIndex = m_originalNodeIndices[edge.first];
+
+				m_coarserGraph->m_originalNodeIndices[coarserIndex] = originalIndex;
+				m_coarserGraph->m_activeNodeIndices[originalIndex] = static_cast<GraphEdge::IndexType>(coarserIndex);
 			}
 
 			m_prolongationMatrix = detail::SparseMat<float>{ SortEntries(pEntries) };
@@ -1883,6 +1890,7 @@ namespace s3d
 			Array<detail::SparseEntry<float>> pEntries(Arg::reserve = (m_adjacencyMatrix.rowCount() * maxIndependentVertices.size()));
 
 			m_coarserGraph->m_originalNodeIndices.resize(maxIndependentVertices.size());
+			m_coarserGraph->m_activeNodeIndices.clear();
 
 			for (const auto [finerIndex, coarserIndex] : maxIndependentVertices)
 			{
@@ -1894,7 +1902,10 @@ namespace s3d
 					pEntries.emplace_back(coarserIndex, childIndex, 1.0f / childDegrees);
 				}
 
-				m_coarserGraph->m_originalNodeIndices[coarserIndex] = m_originalNodeIndices[finerIndex];
+				const auto originalIndex = m_originalNodeIndices[finerIndex];
+
+				m_coarserGraph->m_originalNodeIndices[coarserIndex] = originalIndex;
+				m_coarserGraph->m_activeNodeIndices[originalIndex] = coarserIndex;
 			}
 
 			m_prolongationMatrix = detail::SparseMat<float>{ SortEntries(pEntries) };
@@ -2172,14 +2183,13 @@ namespace s3d
 					if (m_config.updateFunction)
 					{
 						const Vec2 p0DrawPos = toDrawPos(graphCenter, newp0);
-						//const Vec2 p0DrawPos = newp0;
-						const Vec2 newp0DrawPos = m_config.updateFunction(p0Index, p0, p0DrawPos);
+						const auto originalIndex = m_originalNodeIndices[p0Index];
+						const Vec2 newp0DrawPos = m_config.updateFunction(originalIndex, p0, p0DrawPos);
 
 						if (p0DrawPos != newp0DrawPos)
 						{
 							m_timeStep = m_config.initialTimeStep;
 							newp0 = toGraphPos(graphCenter, newp0DrawPos);
-							//newp0 = newp0DrawPos;
 						}
 					}
 
@@ -2327,8 +2337,11 @@ namespace s3d
 
 		DefaultRNG m_rng = DefaultRNG{ 0 };
 
-
+		// activeIndex -> originalIndex
 		Array<GraphEdge::IndexType> m_originalNodeIndices;
+
+		// originalIndex -> activeIndex
+		HashTable<GraphEdge::IndexType, GraphEdge::IndexType> m_activeNodeIndices;
 
 		double m_elapsedSec = 0.0;
 
