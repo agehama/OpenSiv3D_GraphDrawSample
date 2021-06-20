@@ -144,6 +144,8 @@ void Main()
 
 	while (System::Update())
 	{
+		rect.drawFrame(2.0);
+
 		const Circle cursorCircle{ Cursor::Pos(), 30.0 };
 
 		const bool mouseOverLeft = rect.left().intersects(cursorCircle);
@@ -184,8 +186,6 @@ void Main()
 
 		layout.setDrawArea(rect);
 
-		rect.drawFrame(2.0);
-
 		layout.draw(visualizer);
 	}
 }
@@ -219,7 +219,7 @@ void Main()
 -		layout.setDrawArea(rect);
 +		layout.setDrawArea(rect.stretched(-visualizer.m_nodeRadius));
 
-		rect.drawFrame(2.0);
+		layout.draw(visualizer);
 ```
 
 <p align="center">
@@ -278,29 +278,7 @@ public:
   <img alt="tutorial_2_3" src="https://user-images.githubusercontent.com/4939010/121796413-bc64b300-cc53-11eb-894f-6ccdd7f4a53d.png" width="60%">
 </p>
 
-### (4) 回転する
-
-`Transformer2D` を作って描画範囲ごと回転したりスケールをかけたりすることができます。
-
-```diff
-
-+	double angle = 30_deg;
-
-	while (System::Update())
-	{
-+		// マウスホイールで回転する
-+		angle += Mouse::Wheel() * 0.1;
-+
-+		const Transformer2D t(Mat3x2::Rotate(angle, Scene::Center()), TransformCursor::Yes);
-
-		const Circle cursorCircle{ Cursor::Pos(), 30.0 };
-```
-
-<p align="center">
-  <img alt="tutorial_2_4" src="https://user-images.githubusercontent.com/4939010/121796414-bff83a00-cc53-11eb-8c99-e228225006aa.png" width="60%">
-</p>
-
-### (5) レイアウトを固定する
+### (4) レイアウトを固定する
 
 `LayoutForceDirected` は乱数を使うため実行するたびに異なるレイアウトに収束します。
 予め乱数のシードを固定することで、同じレイアウトを再現することが可能です。
@@ -312,6 +290,59 @@ public:
 
 	auto layout = LayoutForceDirected{ loader[0], ForceDirectedConfig{.startImmediately = StartImmediately::Yes } };
 ```
+
+### (5) 回転する
+
+`Transformer2D` を作って描画範囲ごと回転したりスケールをかけたりすることができます。
+
+```diff
++	double angle = 30_deg;
+
+	while (System::Update())
+	{
++		// マウスホイールで回転する
++		angle += Mouse::Wheel() * 0.1;
++
++		const auto mat = Mat3x2::Rotate(angle, Scene::Center());
++		const Transformer2D t(mat, TransformCursor::Yes);
+
+		rect.drawFrame(2.0);
+```
+
+<p align="center">
+  <img alt="tutorial_2_5_1" src="https://user-images.githubusercontent.com/4939010/122674134-c156d300-d20e-11eb-97bb-d75eb6cfc8f0.gif" width="60%">
+</p>
+
+ここで `layout.setDrawArea()` の第二引数に `Mat3x2` を渡せば、描画範囲を固定したままトランスフォームをかけることができます。
+
+```diff
+	while (System::Update())
+	{
+		// マウスホイールで回転する
+		angle += Mouse::Wheel() * 0.1;
+
++		rect.drawFrame(2.0);
++
+		const auto mat = Mat3x2::Rotate(angle, Scene::Center());
+-		const Transformer2D t(mat, TransformCursor::Yes);
++		const Transformer2D t(mat);
+
+-		rect.drawFrame(2.0);
+```
+
+```diff
+		}
+
+-		layout.setDrawArea(rect.stretched(-visualizer.m_nodeRadius));
++		layout.setDrawArea(rect.stretched(-visualizer.m_nodeRadius), mat);
+
+		layout.draw(visualizer);
+	}
+```
+
+<p align="center">
+  <img alt="tutorial_2_5_2" src="https://user-images.githubusercontent.com/4939010/122674888-f1ec3c00-d211-11eb-86e0-6f269e111552.gif" width="60%">
+</p>
 
 ### チュートリアル2 ソースコード全体
 
@@ -368,7 +399,10 @@ void Main()
 		// マウスホイールで回転する
 		angle += Mouse::Wheel() * 0.1;
 
-		const Transformer2D t(Mat3x2::Rotate(angle, Scene::Center()), TransformCursor::Yes);
+		rect.drawFrame(2.0);
+
+		const auto mat = Mat3x2::Rotate(angle, Scene::Center());
+		const Transformer2D t(mat);
 
 		const Circle cursorCircle{ Cursor::Pos(), 30.0 };
 
@@ -408,9 +442,7 @@ void Main()
 			}
 		}
 
-		layout.setDrawArea(rect.stretched(-visualizer.m_nodeRadius));
-
-		rect.drawFrame(2.0);
+		layout.setDrawArea(rect.stretched(-visualizer.m_nodeRadius), mat);
 
 		layout.draw(visualizer);
 	}
