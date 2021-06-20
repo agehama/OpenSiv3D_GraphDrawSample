@@ -668,22 +668,39 @@ namespace s3d
 
 			virtual void setDrawWidth(double width)
 			{
-				const auto rect = graphBoundingRect();
+				const auto rect = graphBoundingRect(true);
 				m_drawScale = width / rect.w;
 			}
 
 			virtual void setDrawHeight(double height)
 			{
-				const auto rect = graphBoundingRect();
+				const auto rect = graphBoundingRect(true);
 				m_drawScale = height / rect.h;
 			}
 
-			virtual void setDrawArea(const RectF& rect)
+			virtual void setDrawArea(const RectF& rect, const Mat3x2& transform = Mat3x2::Identity())
 			{
-				const auto graphRect = graphBoundingRect();
+				const auto invMat = transform.inversed();
+				const Vec2 rectPos = invMat.transformPoint(rect.pos);
+				const Vec2 rectTR = invMat.transformPoint(rect.tr());
+				const Vec2 rectBL = invMat.transformPoint(rect.bl());
 
-				m_drawScale = Min(rect.w / graphRect.w, rect.h / graphRect.h);
-				m_drawCenter = rect.center();
+				const double rectWidth = (rectTR - rectPos).length();
+				const double rectHeight = (rectBL - rectPos).length();
+
+				m_basisX = (rectTR - rectPos).normalize();
+				m_basisY = (rectBL - rectPos).normalize();
+
+				const auto graphRect = graphBoundingRect(true);
+				const Vec2 graphRectPos = m_basisX * graphRect.pos.x + m_basisY * graphRect.pos.y;
+				const Vec2 graphRectTR = m_basisX * graphRect.tr().x + m_basisY * graphRect.tr().y;
+				const Vec2 graphRectBL = m_basisX * graphRect.bl().x + m_basisY * graphRect.bl().y;
+
+				const double graphRectWidth = (graphRectTR - graphRectPos).length();
+				const double graphRectHeight = (graphRectBL - graphRectPos).length();
+
+				m_drawScale = Min(rectWidth / graphRectWidth, rectHeight / graphRectHeight);
+				m_drawCenter = invMat.transformPoint(rect.center());
 			}
 
 			void setDefaultDrawArea()
@@ -696,22 +713,36 @@ namespace s3d
 			[[nodiscard]]
 			Vec2 toDrawPos(const Vec2 graphBasePos, const Vec2& graphPos) const
 			{
-				return m_drawCenter + (graphPos - graphBasePos) * m_drawScale;
+				const Vec2 transformedPos = transformed(graphPos);
+				const Vec2 transformedVec = (transformedPos - graphBasePos) * m_drawScale;
+				return m_drawCenter + m_basisX * transformedVec.x + m_basisY * transformedVec.y;
 			}
 
 			[[nodiscard]]
 			Vec2 toGraphPos(const Vec2 graphBasePos, const Vec2& drawPos) const
 			{
-				return graphBasePos + (drawPos - m_drawCenter) / m_drawScale;
+				const Vec2 transformedPos = transformed(drawPos - m_drawCenter);
+				const Vec2 transformedVec = graphBasePos + transformedPos / m_drawScale;
+				return m_basisX * transformedVec.x + m_basisY * transformedVec.y;
 			}
 
 			[[nodiscard]]
-			virtual RectF graphBoundingRect() const = 0;
+			Vec2 transformed(const Vec2 pos) const
+			{
+				return Vec2{ m_basisX.dot(pos), m_basisY.dot(pos) };
+			}
+
+			[[nodiscard]]
+			virtual RectF graphBoundingRect(bool isTransformed) const = 0;
 
 		private:
 
 			// 描画位置
 			Vec2 m_drawCenter{ 0, 0 };
+
+			Vec2 m_basisX{ 1, 0 };
+
+			Vec2 m_basisY{ 0, 1 };
 
 			// 描画スケール
 			double m_drawScale = 1.0;
@@ -1387,7 +1418,7 @@ namespace s3d
 		{
 			if (isActiveDepth())
 			{
-				const Vec2 graphCenter = graphBoundingRect().center();
+				const Vec2 graphCenter = graphBoundingRect(true).center();
 
 				Array<std::pair<GraphEdge::IndexType, Vec2>> points(nodeCount());
 
@@ -1450,7 +1481,7 @@ namespace s3d
 		{
 			if (isActiveDepth())
 			{
-				const Vec2 graphCenter = graphBoundingRect().center();
+				const Vec2 graphCenter = graphBoundingRect(true).center();
 
 				for (GraphEdge::IndexType p0Index = 0; p0Index < nodeCount(); ++p0Index)
 				{
@@ -1490,18 +1521,19 @@ namespace s3d
 		[[nodiscard]]
 		RectF boundingRect() const
 		{
-			const auto graphRect = graphBoundingRect();
-			const Vec2 tl = toDrawPos(graphRect.center(), graphRect.tl());
-			const Vec2 br = toDrawPos(graphRect.center(), graphRect.br());
+			const auto graphRect = graphBoundingRect(false);
+			const auto graphRectTransformed = graphBoundingRect(true);
+			const Vec2 tl = toDrawPos(graphRectTransformed.center(), graphRect.tl());
+			const Vec2 br = toDrawPos(graphRectTransformed.center(), graphRect.br());
 			return RectF{ tl, br - tl };
 		}
 
 		[[nodiscard]]
 		Vec2 centroid() const
 		{
-			const auto graphRect = graphBoundingRect();
+			const auto graphRectTransformed = graphBoundingRect(true);
 			const auto pos = graphCentroid();
-			return toDrawPos(graphRect.center(), pos);
+			return toDrawPos(graphRectTransformed.center(), pos);
 		}
 
 		template <class URBG>
@@ -1564,20 +1596,20 @@ namespace s3d
 			}
 		}
 
-		void setDrawArea(const RectF& rect) override
+		void setDrawArea(const RectF& rect, const Mat3x2& transform = Mat3x2::Identity()) override
 		{
-			GraphTransform::setDrawArea(rect);
+			GraphTransform::setDrawArea(rect, transform);
 
 			if (m_coarserGraph)
 			{
-				m_coarserGraph->setDrawArea(rect);
+				m_coarserGraph->setDrawArea(rect, transform);
 			}
 		}
 
 	private:
 
 		[[nodiscard]]
-		RectF graphBoundingRect() const override
+		RectF graphBoundingRect(bool isTransformed) const override
 		{
 			if (nodeCount() == 0)
 			{
@@ -1586,21 +1618,22 @@ namespace s3d
 
 			if (isActiveDepth())
 			{
-				float minX = Largest<float>;
-				float minY = Largest<float>;
-				float maxX = -Largest<float>;
-				float maxY = -Largest<float>;
+				double minX = Largest<double>;
+				double minY = Largest<double>;
+				double maxX = -Largest<double>;
+				double maxY = -Largest<double>;
 
 				for (GraphEdge::IndexType nodeIndex = 0; nodeIndex < nodeCount(); ++nodeIndex)
 				{
 					const GraphEdge::IndexType internalIndex = m_positions.rowBegin(nodeIndex);
 					const float x = m_positions.getV(internalIndex + 0);
 					const float y = m_positions.getV(internalIndex + 1);
+					const auto p = isTransformed ? transformed(Vec2{ x, y }) : Vec2{ x, y };
 
-					minX = Min(minX, x);
-					minY = Min(minY, y);
-					maxX = Max(maxX, x);
-					maxY = Max(maxY, y);
+					minX = Min(minX, p.x);
+					minY = Min(minY, p.y);
+					maxX = Max(maxX, p.x);
+					maxY = Max(maxY, p.y);
 				}
 
 				const Vec2 minPos{ minX, minY };
@@ -1610,7 +1643,7 @@ namespace s3d
 
 			if (m_coarserGraph)
 			{
-				return m_coarserGraph->graphBoundingRect();
+				return m_coarserGraph->graphBoundingRect(isTransformed);
 			}
 
 			return Rect{};
@@ -2076,7 +2109,7 @@ namespace s3d
 		void reconstructQuadTree()
 		{
 			const double eps = 1.e-4;
-			const RectF rect = graphBoundingRect().stretched(eps);
+			const RectF rect = graphBoundingRect(false).stretched(eps);
 
 			m_quadTree.init(rect, m_config.maxQuadTreeDepth);
 
@@ -2104,7 +2137,7 @@ namespace s3d
 			double currentEnergy = 0.0;
 			double movementSum = 0.0;
 
-			const Vec2 graphCenter = graphBoundingRect().center();
+			const Vec2 graphCenter = graphBoundingRect(true).center();
 
 			for (GraphEdge::IndexType p0Index = startIndex; p0Index < endIndex; ++p0Index)
 			{
@@ -2375,7 +2408,7 @@ namespace s3d
 
 		void draw(const IGraphVisualizer& visualizer) const
 		{
-			const Vec2 graphCenter = graphBoundingRect().center();
+			const Vec2 graphCenter = graphBoundingRect(true).center();
 
 			for (GraphEdge::IndexType p0Index = 0; p0Index < nodeCount(); ++p0Index)
 			{
@@ -2417,26 +2450,49 @@ namespace s3d
 		[[nodiscard]]
 		RectF boundingRect() const
 		{
-			const auto graphRect = graphBoundingRect();
-			const Vec2 tl = toDrawPos(graphRect.center(), graphRect.tl());
-			const Vec2 br = toDrawPos(graphRect.center(), graphRect.br());
+			const auto graphRect = graphBoundingRect(false);
+			const auto graphRectTransformed = graphBoundingRect(true);
+			const Vec2 tl = toDrawPos(graphRectTransformed.center(), graphRect.tl());
+			const Vec2 br = toDrawPos(graphRectTransformed.center(), graphRect.br());
 			return RectF{ tl, br - tl };
 		}
 
 		[[nodiscard]]
 		Vec2 centroid() const
 		{
-			const auto graphRect = graphBoundingRect();
+			const auto graphRectTransformed = graphBoundingRect(true);
 			const auto pos = graphCentroid();
-			return toDrawPos(graphRect.center(), pos);
+			return toDrawPos(graphRectTransformed.center(), pos);
 		}
 
 	private:
 
 		[[nodiscard]]
-		RectF graphBoundingRect() const override
+		RectF graphBoundingRect(bool isTransformed) const override
 		{
-			return Geometry2D::BoundingRect(m_positions);
+			if (!isTransformed)
+			{
+				return Geometry2D::BoundingRect(m_positions);
+			}
+
+			double minX = Largest<double>;
+			double minY = Largest<double>;
+			double maxX = -Largest<double>;
+			double maxY = -Largest<double>;
+
+			for (auto& position : m_positions)
+			{
+				const auto p = transformed(position);
+
+				minX = Min(minX, p.x);
+				minY = Min(minY, p.y);
+				maxX = Max(maxX, p.x);
+				maxY = Max(maxY, p.y);
+			}
+
+			const Vec2 minPos{ minX, minY };
+			const Vec2 maxPos{ maxX, maxY };
+			return RectF{ minPos, maxPos - minPos };
 		}
 
 		[[nodiscard]]
