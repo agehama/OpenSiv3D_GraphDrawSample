@@ -1414,21 +1414,21 @@ namespace s3d
 		// 現在処理中のグラフの情報を active~~() で取得する
 
 		[[nodiscard]]
-		Array<std::pair<GraphEdge::IndexType, Vec2>> activeNodePositions() const
+		HashTable<GraphEdge::IndexType, Vec2> activeNodePositions() const
 		{
 			if (isActiveDepth())
 			{
 				const Vec2 graphCenter = graphBoundingRect(true).center();
 
-				Array<std::pair<GraphEdge::IndexType, Vec2>> points(nodeCount());
+				HashTable<GraphEdge::IndexType, Vec2> points;
 
-				for (auto [nodeIndex, position] : IndexedRef(points))
+				for (auto i : step(nodeCount()))
 				{
-					const GraphEdge::IndexType internalIndex = m_positions.rowBegin(static_cast<GraphEdge::IndexType>(nodeIndex));
+					const GraphEdge::IndexType internalIndex = m_positions.rowBegin(i);
 					const Vec2 pos{ m_positions.getV(internalIndex), m_positions.getV(internalIndex + 1) };
 
-					position.first = m_originalNodeIndices[nodeIndex];
-					position.second = toDrawPos(graphCenter, pos);
+					const auto nodeIndex = m_originalNodeIndices[i];
+					points.emplace(nodeIndex, toDrawPos(graphCenter, pos));
 				}
 
 				return points;
@@ -1724,7 +1724,7 @@ namespace s3d
 
 			for (GraphEdge::IndexType i = m_adjacencyMatrix.rowBegin(activeNodeIndex); i < m_adjacencyMatrix.rowEnd(activeNodeIndex); ++i)
 			{
-				indices.push_back(m_adjacencyMatrix.getX(i));
+				indices.push_back(m_originalNodeIndices[m_adjacencyMatrix.getX(i)]);
 			}
 
 			return indices;
