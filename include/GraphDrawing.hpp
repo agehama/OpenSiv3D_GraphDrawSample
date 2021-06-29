@@ -1273,6 +1273,9 @@ namespace s3d
 		void init(const ConnectedGraph& connectedGraph, URBG&& urbg, const ForceDirectedConfig& config)
 		{
 			m_config = config;
+			m_elapsedSec = 0.0;
+			m_converged = false;
+			m_failed = false;
 
 			Array<detail::SparseEntry<float>> points(Arg::reserve = (connectedGraph.nodeCount() * 2));
 
