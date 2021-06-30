@@ -10,7 +10,7 @@ void Main()
 
 	const int seed = 0;
 	GetDefaultRNG().seed(seed);
-	LayoutForceDirected layout{ loader[0], ForceDirectedConfig{.repulsiveExponent = 3.5	} };
+	LayoutForceDirected layout{ loader[0], ForceDirectedConfig{.repulsiveExponent = 3.5 } };
 
 	const BasicGraphVisualizer visualizer{ 1.0, 0.0 };
 
