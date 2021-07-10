@@ -1552,6 +1552,8 @@ namespace s3d
 			}
 
 			resetImpl();
+
+			setDefaultDrawArea();
 		}
 
 		void reset()
