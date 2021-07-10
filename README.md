@@ -2,8 +2,6 @@
 
 OpenSiv3D でグラフ描画を行うサンプルとチュートリアルです。
 
-# サンプル
-
 <table align="center">
     <tr>
         <td align="center"><a href="https://github.com/agehama/OpenSiv3D_GraphDrawSample/blob/main/example/example1_TextGraph.cpp"><b>TextGraph</b></a></td>
@@ -23,9 +21,7 @@ OpenSiv3D でグラフ描画を行うサンプルとチュートリアルです�
     </tr>
 </table>
 
-# チュートリアル
-
-## 1 読み込みと初期化
+## チュートリアル1 読み込みと初期化
 
 ### (1) Circular レイアウトで描画する
 
@@ -69,7 +65,7 @@ void Main()
 
 `LayoutForceDirected` のレイアウト計算は複雑なグラフに対して時間がかかるため、Circular レイアウトと異なり通常は `layout.update()` を呼んだタイミングでのみ行われます。
 
-ここでは、例として簡単なグラフを扱うので、設定に `.startImmediately = StartImmediately::Yes` を指定してレイアウト計算をその場で実行します（複雑なグラフをループで少しずつ計算する方法は [3 応用編 インタラクティブな描画](#3-応用編-インタラクティブな描画) を参照してください。）
+ここでは、例として簡単なグラフを扱うので、設定に `.startImmediately = StartImmediately::Yes` を指定してレイアウト計算をその場で実行します（複雑なグラフをループで少しずつ計算する方法は [チュートリアル3 インタラクティブな描画](#チュートリアル3-インタラクティブな描画) を参照してください。）
 
 ```cpp
 void Main()
@@ -142,7 +138,7 @@ void Main()
   <img alt="tutorial_1_3" src="https://user-images.githubusercontent.com/4939010/121870409-fca06000-cd3d-11eb-912a-11eca0e95348.gif" width="60%">
 </p>
 
-## 2 配置と描画
+## チュートリアル2 配置と描画
 
 ### (1) Rect で指定した範囲に描画する
 
@@ -468,7 +464,7 @@ void Main()
 }
 ```
 
-## 3 応用編 インタラクティブな描画
+## チュートリアル3 インタラクティブな描画
 
 ForceDirected レイアウトを使ってグラフの配置をインタラクティブに編集するアプリケーションを作ってみます。
 
