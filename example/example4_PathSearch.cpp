@@ -53,16 +53,16 @@ public:
 
 struct Theme
 {
-	static Color BackgroundColor() { return Color{ U"#e7e4e1" }; }
+	static Color BackgroundColor() { return Color{ U"#f5f5f5" }; }
 
 	static Color NodeColor() { return Color{ U"#eeeeee" }; }
 	static Color NodeFrameColor() { return ColorF{ 0.7 }; }
 
 	static Color EdgeColor() { return Color{ U"#a1a7b2" }; }
 
-	static Color GradientColor(double t) { return Color{ U"#5adc50" }.lerp(Color{ U"#bfa441" }, t); }
+	static Color GradientColor(double t) { return Color{ U"#c8d5e4" }.lerp(Color{ U"#2d3743" }, t); }
 
-	static Color AccentColor() { return Color{ U"#da26ee" }; }
+	static Color AccentColor() { return Color{ U"#2692f7" }; }
 };
 
 class BFSTree
