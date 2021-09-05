@@ -23,7 +23,7 @@ OpenSiv3D でグラフ描画を行うサンプルとチュートリアルです�
 
 ## チュートリアル1 読み込みと初期化
 
-### (1) Circular レイアウトで描画する
+### (1) 円形のレイアウトで描画する
 
 まず、描画するグラフのエッジの配列を引数にして `ConnectedGraph` クラスを作ります（`ConnectedGraph` はすべてのノードがエッジでつながれた`連結グラフ`を表すデータ構造です。）
 
@@ -59,7 +59,7 @@ void Main()
   <img alt="tutorial_1_1" src="https://user-images.githubusercontent.com/4939010/121796481-4b71cb00-cc54-11eb-8295-1e2fbbfd1285.png" width="60%">
 </p>
 
-### (2) ForceDirected レイアウトで描画する
+### (2) 力学モデルによるレイアウトで描画する
 
 今度は `LayoutForceDirected` クラスに `ConnectedGraph` を渡して  ForceDirected レイアウトを行います。
 
