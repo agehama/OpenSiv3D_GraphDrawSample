@@ -680,7 +680,7 @@ namespace s3d
 
 			virtual void setDrawArea(const RectF& rect, const Mat3x2& transform = Mat3x2::Identity())
 			{
-				const auto invMat = transform.inversed();
+				const auto invMat = transform.inverse();
 				const Vec2 rectPos = invMat.transformPoint(rect.pos);
 				const Vec2 rectTR = invMat.transformPoint(rect.tr());
 				const Vec2 rectBL = invMat.transformPoint(rect.bl());
@@ -759,7 +759,7 @@ namespace s3d
 			struct UnionFind
 			{
 				UnionFind(GraphEdge::IndexType nodeSize)
-					: parentIndex(Array<int>::IndexedGenerate(nodeSize, [](size_t i) { return static_cast<GraphEdge::IndexType>(i); }))
+					: parentIndex(Array<GraphEdge::IndexType>::IndexedGenerate(nodeSize, [](size_t i) { return static_cast<GraphEdge::IndexType>(i); }))
 					, groupSize(nodeSize, 1) {}
 
 				GraphEdge::IndexType root(GraphEdge::IndexType i)
