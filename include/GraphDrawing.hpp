@@ -758,9 +758,7 @@ namespace s3d
 
 			struct UnionFind
 			{
-				UnionFind(GraphEdge::IndexType nodeSize)
-					: parentIndex(Array<GraphEdge::IndexType>::IndexedGenerate(nodeSize, [](size_t i) { return static_cast<GraphEdge::IndexType>(i); }))
-					, groupSize(nodeSize, 1) {}
+				UnionFind() = default;
 
 				GraphEdge::IndexType root(GraphEdge::IndexType i)
 				{
@@ -792,16 +790,20 @@ namespace s3d
 					}
 				}
 
-				Array<GraphEdge::IndexType> parentIndex;
+				HashTable<GraphEdge::IndexType, GraphEdge::IndexType> parentIndex;
 
-				Array<GraphEdge::IndexType> groupSize;
+				HashTable<GraphEdge::IndexType, GraphEdge::IndexType> groupSize;
 			};
 
-			const auto maxIt = std::max_element(graph.begin(), graph.end(), [](const auto& a, const auto& b) { return Max(a.index0, a.index1) < Max(b.index0, b.index1); });
+			UnionFind unionFind;
 
-			const GraphEdge::IndexType nodeSize = Max(maxIt->index0, maxIt->index1) + 1;
-
-			UnionFind unionFind(nodeSize);
+			for (auto& edge : graph)
+			{
+				unionFind.parentIndex[edge.index0] = edge.index0;
+				unionFind.parentIndex[edge.index1] = edge.index1;
+				unionFind.groupSize[edge.index0] = 1;
+				unionFind.groupSize[edge.index1] = 1;
+			}
 
 			for (const auto& edge : graph)
 			{
@@ -838,37 +840,20 @@ namespace s3d
 				return {};
 			}
 
-			GraphEdge::IndexType maxVertexIndex = 0;
-
-			HashSet<GraphEdge::IndexType> referencedVertices;
+			std::set<GraphEdge::IndexType> indices;
 
 			for (auto it = begin; it != end; ++it)
 			{
-				const auto& edge = *it;
-
-				const GraphEdge::IndexType index0 = static_cast<GraphEdge::IndexType>(edge.index0);
-				const GraphEdge::IndexType index1 = static_cast<GraphEdge::IndexType>(edge.index1);
-
-				referencedVertices.insert(index0);
-				referencedVertices.insert(index1);
-
-				maxVertexIndex = Max({ index0, index1, maxVertexIndex });
+				indices.emplace(it->index0);
+				indices.emplace(it->index1);
 			}
-
-			GraphEdge::IndexType skippedVertexCount = 0;
 
 			HashTable<GraphEdge::IndexType, GraphEdge::IndexType> indexReplaceMap;
 
-			for (GraphEdge::IndexType i = 0; i <= maxVertexIndex; ++i)
+			GraphEdge::IndexType vertexIndex = 0;
+			for (auto it = indices.begin(); it != indices.end(); ++it)
 			{
-				if (referencedVertices.find(i) == referencedVertices.end())
-				{
-					++skippedVertexCount;
-				}
-				else
-				{
-					indexReplaceMap[i] = i - skippedVertexCount;
-				}
+				indexReplaceMap[*it] = vertexIndex++;
 			}
 
 			Array<GraphEdge> newGraph(Arg::reserve = std::distance(begin, end));
