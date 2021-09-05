@@ -36,7 +36,7 @@ void Main()
 		.tol = 0.001,
 	};
 
-	GetDefaultRNG().seed(0);
+	Reseed(0);
 	auto layouts = Array<LayoutForceDirected>::IndexedGenerate(loader.size(), [&](size_t i) {
 		return LayoutForceDirected{ loader[i], config };
 		}
