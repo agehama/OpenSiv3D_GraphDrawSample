@@ -29,7 +29,7 @@ void Main()
 {
 	Window::Resize({ 640,640 });
 
-	const GraphLoader loader{ U"./primitives.txt" };
+	const GraphLoader loader{ U"./primitives.mtx" };
 
 	const ForceDirectedConfig config{
 		.startImmediately = StartImmediately::Yes,
