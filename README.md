@@ -9,7 +9,7 @@ OpenSiv3D でグラフ描画を行うサンプルとチュートリアルです�
     </tr>
     <tr>
         <td align="center"><img alt="example1" src="https://user-images.githubusercontent.com/4939010/125158652-5ebd7b00-e1ad-11eb-99d0-a1b0b0c5cd3e.png" width="600px"></td>
-        <td align="center"><img alt="example2" src="https://user-images.githubusercontent.com/4939010/125158654-611fd500-e1ad-11eb-9e58-05c9d2cd3246.png" width="600px"></td>
+        <td align="center"><img alt="example2" src="https://user-images.githubusercontent.com/4939010/132219773-93b7c7ff-4744-4411-8530-e17841ecfbc8.png" width="600px"></td>
     </tr>
     <tr>
         <td align="center"><a href="https://github.com/agehama/OpenSiv3D_GraphDrawSample/blob/main/example/example3_JSONViewer.cpp"><b>JSONViewer</b></a></td>
