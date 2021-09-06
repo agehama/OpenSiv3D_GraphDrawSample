@@ -377,7 +377,7 @@ void Main()
 		.initialRadius = 100,
 	};
 
-	GetDefaultRNG().seed(0);
+	Reseed(0);
 
 	LayoutForceDirected graph{ loader[0], config };
 	graph.reset();

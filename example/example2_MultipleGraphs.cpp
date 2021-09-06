@@ -51,7 +51,7 @@ void Main()
 	const Color fontColor{ backgroundColor };
 
 	Scene::SetBackground(backgroundColor);
-	LabelGraphVisualizer visualizer{ Font{16, Typeface::Black }, fontColor, 12, 6, foregroundColor, foregroundColor };
+	LabelGraphVisualizer visualizer{ Font{14, Typeface::Black }, fontColor, 14, 6, foregroundColor, foregroundColor };
 
 	while (System::Update())
 	{
