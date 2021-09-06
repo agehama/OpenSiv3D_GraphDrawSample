@@ -832,8 +832,8 @@ namespace s3d
 			return beginIndices;
 		}
 
-		// グラフから参照されていないインデックスを詰めてエッジリストとノード数を返す
-		static std::pair<Array<GraphEdge>, size_t> ShrinkVertices(typename Array<GraphEdge>::const_iterator begin, typename Array<GraphEdge>::const_iterator end)
+		// グラフから参照されていないインデックスを詰めてエッジリストと元のインデックステーブルを返す
+		static std::pair<Array<GraphEdge>, Array<GraphEdge::IndexType>> ShrinkVertices(typename Array<GraphEdge>::const_iterator begin, typename Array<GraphEdge>::const_iterator end)
 		{
 			if (begin == end)
 			{
@@ -848,12 +848,15 @@ namespace s3d
 				indices.emplace(it->index1);
 			}
 
+			Array<GraphEdge::IndexType> originalIndices(indices.size());
 			HashTable<GraphEdge::IndexType, GraphEdge::IndexType> indexReplaceMap;
 
 			GraphEdge::IndexType vertexIndex = 0;
 			for (auto it = indices.begin(); it != indices.end(); ++it)
 			{
-				indexReplaceMap[*it] = vertexIndex++;
+				indexReplaceMap[*it] = vertexIndex;
+				originalIndices[vertexIndex] = *it;
+				++vertexIndex;
 			}
 
 			Array<GraphEdge> newGraph(Arg::reserve = std::distance(begin, end));
@@ -866,7 +869,7 @@ namespace s3d
 				newGraph.emplace_back(newRowIt->second, newColIt->second);
 			}
 
-			return{ newGraph, indexReplaceMap.size() };
+			return{ newGraph, originalIndices };
 		}
 	}
 
@@ -905,15 +908,19 @@ namespace s3d
 				const GraphEdge::IndexType beginIndex = componentIndices[0];
 				const GraphEdge::IndexType componentEdgeCount = componentEdgeCounts[1];
 
-				std::tie(m_edges, m_nodeCount) = detail::ShrinkVertices(edges.cbegin() + beginIndex, edges.cbegin() + beginIndex + componentEdgeCount);
+				std::tie(m_localEdges, m_originalIndices) = detail::ShrinkVertices(edges.cbegin() + beginIndex, edges.cbegin() + beginIndex + componentEdgeCount);
 
-				detail::SortEntries(m_edges);
+				m_nodeCount = m_originalIndices.size();
+
+				detail::SortEntries(m_localEdges);
+
+				makeOriginalEdges();
 			}
 		}
 
 		const Array<GraphEdge>& edges() const
 		{
-			return m_edges;
+			return m_originalEdges;
 		}
 
 		size_t nodeCount() const
@@ -923,13 +930,37 @@ namespace s3d
 
 	private:
 
-		ConnectedGraph(const Array<GraphEdge>& edgeList, size_t nodeCount)
-			: m_edges(edgeList)
-			, m_nodeCount(nodeCount) {}
+		void makeOriginalEdges()
+		{
+			m_originalEdges.clear();
+			m_originalEdges.reserve(m_localEdges.size());
+
+			for (auto& localEdge : m_localEdges)
+			{
+				const auto index0 = m_originalIndices[localEdge.index0];
+				const auto index1 = m_originalIndices[localEdge.index1];
+
+				m_originalEdges.emplace_back(index0, index1);
+			}
+		}
+
+		ConnectedGraph(const Array<GraphEdge>& edgeList, const Array<GraphEdge::IndexType>& originalIndices)
+			: m_localEdges(edgeList)
+			, m_originalIndices(originalIndices)
+			, m_nodeCount(originalIndices.size())
+		{
+			makeOriginalEdges();
+		}
 
 		friend class GraphLoader;
+		friend class LayoutForceDirected;
+		friend class LayoutCircular;
 
-		Array<GraphEdge> m_edges;
+		Array<GraphEdge> m_localEdges;
+
+		Array<GraphEdge> m_originalEdges;
+
+		Array<GraphEdge::IndexType> m_originalIndices;
 
 		size_t m_nodeCount;
 	};
@@ -1180,7 +1211,7 @@ namespace s3d
 
 				detail::SortEntries(result.first);
 
-				m_connectedComponents.push_back(ConnectedGraph(std::move(result.first), result.second));
+				m_connectedComponents.push_back(ConnectedGraph(std::move(result.first), std::move(result.second)));
 			}
 		}
 
@@ -1264,7 +1295,7 @@ namespace s3d
 
 			Array<detail::SparseEntry<float>> points(Arg::reserve = (connectedGraph.nodeCount() * 2));
 
-			m_originalNodeIndices.resize(connectedGraph.nodeCount());
+			m_originalNodeIndices = connectedGraph.m_originalIndices;
 
 			for (auto i : step(static_cast<GraphEdge::IndexType>(connectedGraph.nodeCount())))
 			{
@@ -1272,13 +1303,13 @@ namespace s3d
 				points.emplace_back(0, i, v.x);
 				points.emplace_back(1, i, v.y);
 
-				m_activeNodeIndices[i] = m_originalNodeIndices[i] = i;
+				m_activeNodeIndices.emplace(m_originalNodeIndices[i], i);
 			}
 
 			m_positions = detail::SparseMat<float>{ points };
 			m_oldPositions = m_positions;
 
-			m_adjacencyMatrix = detail::SparseMat<float>{ connectedGraph.edges() };
+			m_adjacencyMatrix = detail::SparseMat<float>{ connectedGraph.m_localEdges };
 
 			makeCoarseGraphSeries(std::forward<URBG>(urbg));
 
@@ -2386,12 +2417,14 @@ namespace s3d
 		{
 			m_positions.resize(connectedGraph.nodeCount());
 
+			m_originalNodeIndices = connectedGraph.m_originalIndices;
+
 			for (auto i : step(static_cast<GraphEdge::IndexType>(connectedGraph.nodeCount())))
 			{
 				m_positions[i] = Circular(Arg::r = 1.0, Arg::theta = 2_pi * i / connectedGraph.nodeCount()).fastToVec2();
 			}
 
-			m_adjacencyMatrix = detail::SparseMat<float>{ connectedGraph.edges() };
+			m_adjacencyMatrix = detail::SparseMat<float>{ connectedGraph.m_localEdges };
 
 			setDefaultDrawArea();
 		}
@@ -2413,7 +2446,7 @@ namespace s3d
 					const Vec2& p0 = m_positions[p0Index];
 					const Vec2& p1 = m_positions[p1Index];
 
-					visualizer.drawEdge(Line{ toDrawPos(graphCenter, p0), toDrawPos(graphCenter, p1) }, p0Index, p1Index);
+					visualizer.drawEdge(Line{ toDrawPos(graphCenter, p0), toDrawPos(graphCenter, p1) }, m_originalNodeIndices[p0Index], m_originalNodeIndices[p1Index]);
 				}
 			}
 
@@ -2421,7 +2454,7 @@ namespace s3d
 			{
 				const Vec2& pos = m_positions[nodeIndex];
 
-				visualizer.drawNode(toDrawPos(graphCenter, pos), nodeIndex);
+				visualizer.drawNode(toDrawPos(graphCenter, pos), m_originalNodeIndices[nodeIndex]);
 			}
 		}
 
@@ -2499,5 +2532,7 @@ namespace s3d
 		Array<Vec2> m_positions;
 
 		detail::SparseMat<float> m_adjacencyMatrix;
+
+		Array<GraphEdge::IndexType> m_originalNodeIndices;
 	};
 }
