@@ -34,6 +34,10 @@ OpenSiv3D でグラフ描画を行うサンプルとチュートリアルです�
 このとき、`LayoutCircular` はグラフの配置情報しか持たないので、引数に `BasicGraphVisualizer` クラスを与えて色や大きさなど描画の方法を指定します。
 
 ```cpp
+#include <Siv3D.hpp> // OpenSiv3D v0.6
+
+#include "include/GraphDrawing.hpp"
+
 void Main()
 {
 	const ConnectedGraph graph = { {
@@ -68,6 +72,10 @@ void Main()
 ここでは、例として簡単なグラフを扱うので、設定に `.startImmediately = StartImmediately::Yes` を指定してレイアウト計算をその場で実行します（複雑なグラフをループで少しずつ計算する方法は [チュートリアル3 インタラクティブな描画](#チュートリアル3-インタラクティブな描画) を参照してください。）
 
 ```cpp
+#include <Siv3D.hpp> // OpenSiv3D v0.6
+
+#include "include/GraphDrawing.hpp"
+
 void Main()
 {
 	const ConnectedGraph graph = { {
@@ -93,28 +101,68 @@ void Main()
   <img alt="tutorial_1_2" src="https://user-images.githubusercontent.com/4939010/121796483-50367f00-cc54-11eb-912d-d14b16025eb7.png" width="60%">
 </p>
 
-### (3) ファイルからグラフを読み込む
+### (3) 複数のグラフを扱う
 
-ファイルからグラフを読み込むには `GraphLoader` クラスを使います。
-
-`GraphLoader` は入力に以下の形式をサポートします。
-- Matrix Market Exchange Formats 形式 (.mtx)
-- エッジリスト (.txt)
-- `Array<GraphEdge>`
-
-`GraphLoader` で読み込んだグラフは連結成分ごとに分解されて、それぞれの `ConnectedGraph` には添え字アクセスすることができます。
+連結でないグラフは `GraphSet` クラスを使用して `ConnectedGraph` に分解することで描画できます。
 
 ```cpp
+#include <Siv3D.hpp> // OpenSiv3D v0.6
+
+#include "include/GraphDrawing.hpp"
+
 void Main()
 {
-	const GraphLoader loader(U"example/primitives.mtx");
+	const GraphSet graphs = { {
+		// [0]
+		{0, 1},
+		{1, 2},
+		{2, 0},
 
-	const ForceDirectedConfig config{
-		.startImmediately = StartImmediately::Yes,
-	};
+		// [1]
+		{3, 4},
+		{4, 5},
+		{5, 6},
+		{6, 3},
+	} };
+
+	const ForceDirectedConfig config{ .startImmediately = StartImmediately::Yes };
+
+	const LayoutForceDirected layout0{ graphs[0], config };
+
+	const LayoutForceDirected layout1{ graphs[1], config };
+
+	while (System::Update())
+	{
+		layout0.draw(BasicGraphVisualizer{});
+
+		layout1.draw(BasicGraphVisualizer{});
+	}
+}
+```
+
+<p align="center">
+  <img alt="tutorial_1_3" src="https://user-images.githubusercontent.com/4939010/132346308-c7b76722-6fbc-4578-862e-893f6aeec421.png" width="60%">
+</p>
+
+### (4) ファイルからグラフを読み込む
+
+テキストファイルからグラフを読み込むには次の関数を使います。
+- `ReadEdgeListText()` : エッジリスト (.txt)
+- `ReadMMCoordinateFormat()` : Matrix Market Exchange Formats 形式 (.mtx)
+
+```cpp
+#include <Siv3D.hpp> // OpenSiv3D v0.6
+
+#include "include/GraphDrawing.hpp"
+
+void Main()
+{
+	const GraphSet graphs = ReadMMCoordinateFormat(U"primitives.mtx");
+
+	const ForceDirectedConfig config{ .startImmediately = StartImmediately::Yes };
 
 	int32 index = 0;
-	LayoutForceDirected layout{ loader[index], config };
+	LayoutForceDirected layout{ graphs[index], config };
 
 	const Font font{ 24 };
 
@@ -122,20 +170,20 @@ void Main()
 	{
 		if (KeySpace.down())
 		{
-			index = (index + 1) % loader.size();
+			index = (index + 1) % graphs.size();
 
-			layout = LayoutForceDirected{ loader[index], config };
+			layout = LayoutForceDirected{ graphs[index], config };
 		}
 
 		layout.draw(BasicGraphVisualizer{});
 
-		font(U"グラフ", index + 1, U"/", loader.size(), U"（Space キーでグラフを切り替える）").draw(0, 0, Palette::Yellow);
+		font(U"グラフ", index + 1, U"/", graphs.size(), U"（Space キーでグラフを切り替える）").draw(0, 0, Palette::Yellow);
 	}
 }
 ```
 
 <p align="center">
-  <img alt="tutorial_1_3" src="https://user-images.githubusercontent.com/4939010/121870409-fca06000-cd3d-11eb-912a-11eca0e95348.gif" width="60%">
+  <img alt="tutorial_1_4" src="https://user-images.githubusercontent.com/4939010/121870409-fca06000-cd3d-11eb-912a-11eca0e95348.gif" width="60%">
 </p>
 
 ## チュートリアル2 配置と描画
@@ -147,11 +195,15 @@ void Main()
 例として `Rect` の端を掴んで描画範囲を動かせるプログラムを作ってみます。
 
 ```cpp
+#include <Siv3D.hpp> // OpenSiv3D v0.6
+
+#include "include/GraphDrawing.hpp"
+
 void Main()
 {
-	const GraphLoader loader{ U"example/simpleGraph.txt" };
+	const GraphSet graphs = ReadEdgeListText(U"simpleGraph.txt");
 
-	auto layout = LayoutForceDirected{ loader[0], ForceDirectedConfig{ .startImmediately = StartImmediately::Yes } };
+	auto layout = LayoutForceDirected{ graphs[0], ForceDirectedConfig{.startImmediately = StartImmediately::Yes } };
 
 	RectF rect = Scene::Rect().stretched(-100);
 
@@ -299,11 +351,11 @@ public:
 予め乱数のシードを固定することで、同じレイアウトを再現することが可能です。
 
 ```diff
-	const GraphLoader loader{ U"example/simpleGraph.txt" };
+	const GraphSet graphs = ReadEdgeListText(U"simpleGraph.txt");
 
-+	GetDefaultRNG().seed(0); // シード値を0に設定
++	Reseed(0); // シード値を0に設定
 
-	auto layout = LayoutForceDirected{ loader[0], ForceDirectedConfig{.startImmediately = StartImmediately::Yes } };
+	auto layout = LayoutForceDirected{ graphs[0], ForceDirectedConfig{.startImmediately = StartImmediately::Yes } };
 ```
 
 ### (5) 回転する
@@ -396,11 +448,11 @@ public:
 
 void Main()
 {
-	const GraphLoader loader{ U"example/simpleGraph.txt" };
+	const GraphSet graphs = ReadEdgeListText(U"simpleGraph.txt");
 
-	GetDefaultRNG().seed(0); // シード値を0に設定
+	Reseed(0);
 
-	auto layout = LayoutForceDirected{ loader[0], ForceDirectedConfig{.startImmediately = StartImmediately::Yes } };
+	auto layout = LayoutForceDirected{ graphs[0], ForceDirectedConfig{.startImmediately = StartImmediately::Yes } };
 
 	RectF rect = Scene::Rect().stretched(-100);
 
@@ -480,16 +532,20 @@ ForceDirected レイアウトを使ってグラフの配置をインタラクテ
 また、これまでは `layout.setDrawArea()` は最初に一度呼んだきりでしたが、レイアウトが更新されるたびに座標が変わるので呼びなおす必要があります。
 
 ```cpp
+#include <Siv3D.hpp> // OpenSiv3D v0.6
+
+#include "include/GraphDrawing.hpp"
+
 void Main()
 {
-	const GraphLoader loader{ U"example/sierpinski.txt" };
+	const GraphSet graphs = ReadEdgeListText(U"sierpinski.txt");
 
 	const double nodeRadius = 7;
 	BasicGraphVisualizer visualizer{ nodeRadius };
 
-	GetDefaultRNG().seed(0);
+	Reseed(0);
 
-	LayoutForceDirected layout{ loader[0], ForceDirectedConfig{} };
+	LayoutForceDirected layout{ graphs[0], ForceDirectedConfig{} };
 
 	while (System::Update())
 	{
@@ -519,7 +575,7 @@ void Main()
 +
 +	Optional<GraphEdge::IndexType> clickedNode;
 
-	const GraphLoader loader{ U"example/sierpinski.txt" };
+	const GraphSet graphs = ReadEdgeListText(U"sierpinski.txt");
 ```
 
 ```diff
@@ -566,9 +622,9 @@ void Main()
 これにクリック中のノードの座標をカーソル位置に移動する処理を加えましょう。
 
 ```diff
-	GetDefaultRNG().seed(0);
+	Reseed(0);
 
--	LayoutForceDirected layout{ loader[0], ForceDirectedConfig{} };
+-	LayoutForceDirected layout{ graphs[0], ForceDirectedConfig{} };
 +	ForceDirectedConfig config
 +	{
 +		.autoSuspend = false,
@@ -585,7 +641,7 @@ void Main()
 +		return newPos;
 +	};
 +
-+	LayoutForceDirected layout{ loader[0], config };
++	LayoutForceDirected layout{ graphs[0], config };
 ```
 
 あとはマウスを離したときに `clickedNode` をリセットする処理を入れればドラッグ移動ができるようになります。
@@ -626,12 +682,12 @@ void Main()
 
 	Optional<GraphEdge::IndexType> clickedNode;
 
-	const GraphLoader loader{ U"example/sierpinski.txt" };
+	const GraphSet graphs = ReadEdgeListText(U"sierpinski.txt");
 
 	const double nodeRadius = 7;
 	BasicGraphVisualizer visualizer{ nodeRadius };
 
-	GetDefaultRNG().seed(0);
+	Reseed(0);
 
 	ForceDirectedConfig config
 	{
@@ -649,7 +705,7 @@ void Main()
 		return newPos;
 	};
 
-	LayoutForceDirected layout{ loader[0], config };
+	LayoutForceDirected layout{ graphs[0], config };
 
 	while (System::Update())
 	{
