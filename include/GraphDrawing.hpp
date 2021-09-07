@@ -900,6 +900,12 @@ namespace s3d
 
 			Array<GraphEdge::IndexType> componentIndices = detail::DecomposeConnectingComponents(edges);
 
+			// 不正なデータが渡されたら空のままにしておく
+			if (componentIndices.size() != 1)
+			{
+				return;
+			}
+
 			Array<GraphEdge::IndexType> componentEdgeCounts;
 
 			std::adjacent_difference(componentIndices.begin(), componentIndices.end(), std::back_inserter(componentEdgeCounts));
@@ -918,14 +924,24 @@ namespace s3d
 			}
 		}
 
-		const Array<GraphEdge>& edges() const
+		const Array<GraphEdge>& edges() const noexcept
 		{
 			return m_originalEdges;
 		}
 
-		size_t nodeCount() const
+		size_t nodeCount() const noexcept
 		{
 			return m_nodeCount;
+		}
+
+		bool isEmpty() const noexcept
+		{
+			return m_nodeCount == 0 || m_localEdges.empty() || m_originalEdges.empty() || m_originalIndices.empty();
+		}
+
+		explicit operator bool() const noexcept
+		{
+			return !isEmpty();
 		}
 
 	private:
@@ -962,7 +978,7 @@ namespace s3d
 
 		Array<GraphEdge::IndexType> m_originalIndices;
 
-		size_t m_nodeCount;
+		size_t m_nodeCount = 0;
 	};
 
 	struct IGraphVisualizer
