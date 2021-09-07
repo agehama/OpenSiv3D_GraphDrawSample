@@ -6,10 +6,10 @@ void Main()
 {
 	Window::Resize(1280, 720);
 
-	const GraphLoader loader{ U"./textGraph.mtx" };
+	const GraphSet graphs = ReadMMCoordinateFormat(U"./textGraph.mtx");
 
 	Reseed(0);
-	LayoutForceDirected layout{ loader[0], ForceDirectedConfig{.repulsiveExponent = 3.5 } };
+	LayoutForceDirected layout{ graphs[0], ForceDirectedConfig{.repulsiveExponent = 3.5 } };
 
 	const BasicGraphVisualizer visualizer{ 1.0, 0.0 };
 

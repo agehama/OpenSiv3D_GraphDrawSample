@@ -952,7 +952,7 @@ namespace s3d
 			makeOriginalEdges();
 		}
 
-		friend class GraphLoader;
+		friend class GraphSet;
 		friend class LayoutForceDirected;
 		friend class LayoutCircular;
 
@@ -1005,127 +1005,22 @@ namespace s3d
 		ColorF m_edgeColor;
 	};
 
-	class GraphLoader
+	// ConnectGraphの集合
+	class GraphSet
 	{
 	public:
 
-		GraphLoader() = default;
+		GraphSet() = default;
 
-		explicit GraphLoader(const FilePath& path)
-		{
-			if (FileSystem::Extension(path) == U"mtx")
-			{
-				loadMMCoordinateFormat(path);
-			}
-			else
-			{
-				loadEdgeList(path);
-			}
-		}
-
-		explicit GraphLoader(const Array<GraphEdge>& edgeList)
+		explicit GraphSet(const Array<GraphEdge>& edgeList)
 		{
 			loadEdgeList(edgeList.begin(), edgeList.end());
 		}
 
 		template <class ForwardIt>
-		GraphLoader(ForwardIt first, ForwardIt last)
+		GraphSet(ForwardIt first, ForwardIt last)
 		{
 			loadEdgeList(first, last);
-		}
-
-		// .mtx (Matrix Market Exchange Formats) からロード
-		void loadMMCoordinateFormat(const FilePath& path)
-		{
-			TextReader reader{ path };
-
-			if (not reader)
-			{
-				throw Error{ U"LoadMMCoordinateFormat(): Failed to open `{0}`"_fmt(path) };
-			}
-
-			size_t edgeCount = 0;
-			{
-				String line;
-
-				while (reader.readLine(line))
-				{
-					if (line.starts_with(U"%")) // comment
-					{
-						continue;
-					}
-
-					const auto nums = line.split(U' ').map([](const String& str) { return ParseInt<int32>(str); });
-
-					if (nums.size() == 3)
-					{
-						edgeCount = nums[2];
-						break;
-					}
-				}
-			}
-
-			Array<GraphEdge> edges(Arg::reserve = edgeCount);
-			{
-				String line;
-
-				while (reader.readLine(line))
-				{
-					if (line.starts_with(U"%")) // comment
-					{
-						continue;
-					}
-
-					const auto numStrs = line.split(U' ');
-					if (2 <= numStrs.size())
-					{
-						const GraphEdge::IndexType num0 = ParseInt<GraphEdge::IndexType>(numStrs[0]);
-						const GraphEdge::IndexType num1 = ParseInt<GraphEdge::IndexType>(numStrs[1]);
-
-						if (num0 != num1)
-						{
-							edges.emplace_back(num0, num1);
-							edges.emplace_back(num1, num0);
-						}
-					}
-				}
-			}
-
-			loadDecomposed(edges);
-		}
-
-		// エッジのペアのリストをロード
-		void loadEdgeList(const FilePath& path)
-		{
-			TextReader reader{ path };
-
-			if (not reader)
-			{
-				throw Error{ U"loadEdgeList(): Failed to open `{0}`"_fmt(path) };
-			}
-
-			Array<GraphEdge> edges;
-
-			String line;
-
-			while (reader.readLine(line))
-			{
-				const auto elements = line.split(U' ').map([](const String& str) { return Parse<GraphEdge::IndexType>(str); });
-
-				if (2 <= elements.size())
-				{
-					const GraphEdge::IndexType indexA = elements[0];
-					const GraphEdge::IndexType indexB = elements[1];
-
-					if (indexA != indexB)
-					{
-						edges.emplace_back(indexA, indexB);
-						edges.emplace_back(indexB, indexA);
-					}
-				}
-			}
-
-			loadDecomposed(edges);
 		}
 
 		template <class ForwardIt>
@@ -1217,6 +1112,98 @@ namespace s3d
 
 		Array<ConnectedGraph> m_connectedComponents;
 	};
+
+	// .mtx (Matrix Market Exchange Formats) 形式で読み込む
+	GraphSet ReadMMCoordinateFormat(const FilePath& path)
+	{
+		TextReader reader{ path };
+
+		if (not reader)
+		{
+			throw Error{ U"LoadMMCoordinateFormat(): Failed to open `{0}`"_fmt(path) };
+		}
+
+		size_t edgeCount = 0;
+		{
+			String line;
+
+			while (reader.readLine(line))
+			{
+				if (line.starts_with(U"%")) // comment
+				{
+					continue;
+				}
+
+				const auto nums = line.split(U' ').map([](const String& str) { return ParseInt<int32>(str); });
+
+				if (nums.size() == 3)
+				{
+					edgeCount = nums[2];
+					break;
+				}
+			}
+		}
+
+		Array<GraphEdge> edges(Arg::reserve = edgeCount);
+		{
+			String line;
+
+			while (reader.readLine(line))
+			{
+				if (line.starts_with(U"%")) // comment
+				{
+					continue;
+				}
+
+				const auto numStrs = line.split(U' ');
+				if (2 <= numStrs.size())
+				{
+					const GraphEdge::IndexType num0 = ParseInt<GraphEdge::IndexType>(numStrs[0]);
+					const GraphEdge::IndexType num1 = ParseInt<GraphEdge::IndexType>(numStrs[1]);
+
+					if (num0 != num1)
+					{
+						edges.emplace_back(num0, num1);
+					}
+				}
+			}
+		}
+
+		return GraphSet{ edges };
+	}
+
+	// エッジのリストをファイルから読み込む
+	GraphSet ReadEdgeListText(const FilePath& path)
+	{
+		TextReader reader{ path };
+
+		if (not reader)
+		{
+			throw Error{ U"loadEdgeList(): Failed to open `{0}`"_fmt(path) };
+		}
+
+		Array<GraphEdge> edges;
+
+		String line;
+
+		while (reader.readLine(line))
+		{
+			const auto elements = line.split(U' ').map([](const String& str) { return Parse<GraphEdge::IndexType>(str); });
+
+			if (2 <= elements.size())
+			{
+				const GraphEdge::IndexType indexA = elements[0];
+				const GraphEdge::IndexType indexB = elements[1];
+
+				if (indexA != indexB)
+				{
+					edges.emplace_back(indexA, indexB);
+				}
+			}
+		}
+
+		return GraphSet{ edges };
+	}
 
 	struct ForceDirectedConfig
 	{

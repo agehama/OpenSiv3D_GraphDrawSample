@@ -187,7 +187,7 @@ public:
 				m_transitionWatch.start();
 			}
 		}
-		
+
 		for (auto& child : m_children)
 		{
 			child.update(positions);
@@ -357,7 +357,7 @@ void Main()
 {
 	Window::Resize(720, 720);
 
-	const GraphLoader loader{ U"./clusterGraph.mtx" };
+	const GraphSet graphs = ReadMMCoordinateFormat(U"./clusterGraph.mtx");
 
 	Optional<GrabInfo> grabbingNode;
 
@@ -379,7 +379,7 @@ void Main()
 
 	Reseed(0);
 
-	LayoutForceDirected graph{ loader[0], config };
+	LayoutForceDirected graph{ graphs[0], config };
 	graph.reset();
 
 	Scene::SetBackground(Theme::BackgroundColor());
@@ -468,7 +468,7 @@ void Main()
 			}
 
 			tree.update(graph.activeNodePositions());
-			
+
 			graph.draw(edgeVisualizer);
 
 			tree.drawBack(edgeVisualizer);

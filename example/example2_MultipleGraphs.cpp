@@ -29,7 +29,7 @@ void Main()
 {
 	Window::Resize({ 640,640 });
 
-	const GraphLoader loader{ U"./primitives.mtx" };
+	const GraphSet graphs = ReadMMCoordinateFormat(U"./primitives.mtx");
 
 	const ForceDirectedConfig config{
 		.startImmediately = StartImmediately::Yes,
@@ -37,8 +37,8 @@ void Main()
 	};
 
 	Reseed(0);
-	auto layouts = Array<LayoutForceDirected>::IndexedGenerate(loader.size(), [&](size_t i) {
-		return LayoutForceDirected{ loader[i], config };
+	auto layouts = Array<LayoutForceDirected>::IndexedGenerate(graphs.size(), [&](size_t i) {
+		return LayoutForceDirected{ graphs[i], config };
 		}
 	);
 
