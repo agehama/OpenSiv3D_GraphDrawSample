@@ -1291,6 +1291,11 @@ namespace s3d
 		template <class URBG>
 		void init(const ConnectedGraph& connectedGraph, URBG&& urbg, const ForceDirectedConfig& config)
 		{
+			if (connectedGraph.isEmpty())
+			{
+				return;
+			}
+
 			m_config = config;
 			m_elapsedSec = 0.0;
 			m_converged = false;
@@ -2418,6 +2423,11 @@ namespace s3d
 
 		void init(const ConnectedGraph& connectedGraph)
 		{
+			if (connectedGraph.isEmpty())
+			{
+				return;
+			}
+
 			m_positions.resize(connectedGraph.nodeCount());
 
 			m_originalNodeIndices = connectedGraph.m_originalIndices;
