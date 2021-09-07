@@ -901,7 +901,7 @@ namespace s3d
 			Array<GraphEdge::IndexType> componentIndices = detail::DecomposeConnectingComponents(edges);
 
 			// 不正なデータが渡されたら空のままにしておく
-			if (componentIndices.size() != 1)
+			if (componentIndices.size() != 2)
 			{
 				return;
 			}
