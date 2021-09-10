@@ -1350,7 +1350,7 @@ namespace s3d
 
 			for (auto i : step(static_cast<GraphEdge::IndexType>(connectedGraph.nodeCount())))
 			{
-				const Vec2 v = initialPositions.find(m_originalNodeIndices[i])->second;
+				const auto v = static_cast<Vector2D<float>>(initialPositions.find(m_originalNodeIndices[i])->second);
 
 				points.emplace_back(0, i, v.x);
 				points.emplace_back(1, i, v.y);
