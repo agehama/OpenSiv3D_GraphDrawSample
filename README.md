@@ -12,12 +12,18 @@ OpenSiv3D でグラフ描画を行うサンプルとチュートリアルです�
         <td align="center"><img alt="example2" src="https://user-images.githubusercontent.com/4939010/132219773-93b7c7ff-4744-4411-8530-e17841ecfbc8.png" width="600px"></td>
     </tr>
     <tr>
-        <td align="center"><a href="https://github.com/agehama/OpenSiv3D_GraphDrawSample/blob/main/example/example3_JSONViewer.cpp"><b>JSONViewer</b></a></td>
-	<td align="center"><a href="https://github.com/agehama/OpenSiv3D_GraphDrawSample/blob/main/example/example4_PathSearch.cpp"><b>PathSearch</b></a></td>
+        <td align="center"><a href="https://github.com/agehama/OpenSiv3D_GraphDrawSample/blob/main/example/example3_RailwayMap.cpp"><b>RailwayMap</b></a></td>
+        <td align="center"><a href="https://github.com/agehama/OpenSiv3D_GraphDrawSample/blob/main/example/example4_JSONViewer.cpp"><b>JSONViewer</b></a></td>
     </tr>
     <tr>
-        <td align="center"><img alt="example3" src="https://user-images.githubusercontent.com/4939010/125158658-62510200-e1ad-11eb-9657-61ac78c0a1c1.png" width="600px"></td>
-        <td align="center"><img alt="example4" src="https://user-images.githubusercontent.com/4939010/125159539-025d5a00-e1b3-11eb-804c-d717ebf368a1.png" width="600px"></td>
+	<td align="center"><img alt="example3" src="https://user-images.githubusercontent.com/4939010/132863890-b1e22998-8800-4a34-bba1-93c386399e0c.png" width="600px"></td>
+        <td align="center"><img alt="example4" src="https://user-images.githubusercontent.com/4939010/125158658-62510200-e1ad-11eb-9657-61ac78c0a1c1.png" width="600px"></td>
+    </tr>
+    <tr>
+	<td align="center"><a href="https://github.com/agehama/OpenSiv3D_GraphDrawSample/blob/main/example/example5_PathSearch.cpp"><b>PathSearch</b></a></td>
+    </tr>
+    <tr>
+        <td align="center"><img alt="example5" src="https://user-images.githubusercontent.com/4939010/125159539-025d5a00-e1b3-11eb-804c-d717ebf368a1.png" width="600px"></td>
     </tr>
 </table>
 
