@@ -1,0 +1,1356 @@
+﻿[[Station]]
+	id = 0
+	name = "大崎"
+	pos = "(-91.99669, 717.82135)"
+
+[[Station]]
+	id = 1
+	name = "五反田"
+	pos = "(-138.23082, 655.83252)"
+
+[[Station]]
+	id = 2
+	name = "目黒"
+	pos = "(-218.64464, 576.33423)"
+
+[[Station]]
+	id = 3
+	name = "恵比寿"
+	pos = "(-275.71251, 448.69446)"
+
+[[Station]]
+	id = 4
+	name = "渋谷"
+	pos = "(-364.0609, 326.85303)"
+
+[[Station]]
+	id = 5
+	name = "原宿"
+	pos = "(-350.48058, 209.09333)"
+
+[[Station]]
+	id = 6
+	name = "代々木"
+	pos = "(-355.97374, 84.96308)"
+
+[[Station]]
+	id = 7
+	name = "新宿"
+	pos = "(-371.69029, 18.28217)"
+
+[[Station]]
+	id = 8
+	name = "新大久保"
+	pos = "(-373.82652, -93.18329)"
+
+[[Station]]
+	id = 9
+	name = "高田馬場"
+	pos = "(-339.18907, -211.21002)"
+
+[[Station]]
+	id = 10
+	name = "目白"
+	pos = "(-314.16466, -289.18243)"
+
+[[Station]]
+	id = 11
+	name = "池袋"
+	pos = "(-265.48912, -386.99127)"
+
+[[Station]]
+	id = 12
+	name = "大塚"
+	pos = "(-90.6234, -398.5498)"
+
+[[Station]]
+	id = 13
+	name = "巣鴨"
+	pos = "(16.64589, -418.88214)"
+
+[[Station]]
+	id = 14
+	name = "駒込"
+	pos = "(104.07875, -452.68036)"
+
+[[Station]]
+	id = 15
+	name = "田端"
+	pos = "(235.91469, -462.25525)"
+
+[[Station]]
+	id = 16
+	name = "西日暮里"
+	pos = "(292.21962, -403.96667)"
+
+[[Station]]
+	id = 17
+	name = "日暮里"
+	pos = "(336.47011, -363.53088)"
+
+[[Station]]
+	id = 18
+	name = "鶯谷"
+	pos = "(403.76137, -299.29138)"
+
+[[Station]]
+	id = 19
+	name = "上野"
+	pos = "(393.99574, -222.34894)"
+
+[[Station]]
+	id = 20
+	name = "御徒町"
+	pos = "(370.95497, -157.2702)"
+
+[[Station]]
+	id = 21
+	name = "秋葉原"
+	pos = "(356.45912, -70.63843)"
+
+[[Station]]
+	id = 22
+	name = "神田"
+	pos = "(330.06142, 3.82447)"
+
+[[Station]]
+	id = 23
+	name = "東京"
+	pos = "(284.59022, 101.6333)"
+
+[[Station]]
+	id = 24
+	name = "有楽町"
+	pos = "(261.70204, 161.14258)"
+
+[[Station]]
+	id = 25
+	name = "新橋"
+	pos = "(209.51698, 253.61084)"
+
+[[Station]]
+	id = 26
+	name = "浜松町"
+	pos = "(195.02113, 361.64307)"
+
+[[Station]]
+	id = 27
+	name = "田町"
+	pos = "(99.34853, 458.19306)"
+
+[[Station]]
+	id = 28
+	name = "高輪ゲートウェイ"
+	pos = "(30.68397, 560.54138)"
+
+[[Station]]
+	id = 29
+	name = "品川"
+	pos = "(13.59413, 627.94708)"
+
+[[Station]]
+	id = 30
+	name = "三鷹"
+	pos = "(-1773.21007, -111.26495)"
+
+[[Station]]
+	id = 31
+	name = "吉祥寺"
+	pos = "(-1578.8131, -115.61371)"
+
+[[Station]]
+	id = 32
+	name = "西荻窪"
+	pos = "(-1382.73766, -122.86163)"
+
+[[Station]]
+	id = 33
+	name = "荻窪"
+	pos = "(-1175.37071, -129.65179)"
+
+[[Station]]
+	id = 34
+	name = "阿佐ケ谷"
+	pos = "(-1017.74742, -132.62726)"
+
+[[Station]]
+	id = 35
+	name = "高円寺"
+	pos = "(-879.80797, -137.7008)"
+
+[[Station]]
+	id = 36
+	name = "中野"
+	pos = "(-718.0648, -142.08771)"
+
+[[Station]]
+	id = 37
+	name = "東中野"
+	pos = "(-532.06017, -149.7171)"
+
+[[Station]]
+	id = 38
+	name = "大久保"
+	pos = "(-403.1234, -92.26776)"
+
+[[Station]]
+	id = 39
+	name = "千駄ケ谷"
+	pos = "(-259.99596, 103.23548)"
+
+[[Station]]
+	id = 40
+	name = "信濃町"
+	pos = "(-169.05357, 115.25177)"
+
+[[Station]]
+	id = 41
+	name = "四ツ谷"
+	pos = "(-70.02403, 55.13214)"
+
+[[Station]]
+	id = 42
+	name = "市ケ谷"
+	pos = "(-20.58556, 5.54108)"
+
+[[Station]]
+	id = 43
+	name = "飯田橋"
+	pos = "(75.08705, -102.79632)"
+
+[[Station]]
+	id = 44
+	name = "水道橋"
+	pos = "(166.79237, -104.81811)"
+
+[[Station]]
+	id = 45
+	name = "御茶ノ水"
+	pos = "(273.14613, -80.48034)"
+
+[[Station]]
+	id = 46
+	name = "浅草橋"
+	pos = "(467.84828, -58.46954)"
+
+[[Station]]
+	id = 47
+	name = "両国"
+	pos = "(556.95961, -42.33337)"
+
+[[Station]]
+	id = 48
+	name = "錦糸町"
+	pos = "(764.9369, -52.44232)"
+
+[[Station]]
+	id = 49
+	name = "亀戸"
+	pos = "(886.24428, -57.89734)"
+
+[[Station]]
+	id = 50
+	name = "平井"
+	pos = "(1045.39345, -148.72528)"
+
+[[Station]]
+	id = 51
+	name = "新小岩"
+	pos = "(1201.33827, -253.47687)"
+
+[[Station]]
+	id = 52
+	name = "小岩"
+	pos = "(1441.20644, -416.51703)"
+
+[[Station]]
+	id = 53
+	name = "市川"
+	pos = "(1705.0309, -373.48724)"
+
+[[Station]]
+	id = 54
+	name = "本八幡"
+	pos = "(1897.7494, -293.41675)"
+
+[[Station]]
+	id = 55
+	name = "下総中山"
+	pos = "(2054.45717, -227.1936)"
+
+[[Station]]
+	id = 56
+	name = "西船橋"
+	pos = "(2218.94691, -157.2702)"
+
+[[Station]]
+	id = 57
+	name = "船橋"
+	pos = "(2470.71693, -103.1015)"
+
+[[Station]]
+	id = 58
+	name = "東船橋"
+	pos = "(2662.97768, -82.54028)"
+
+[[Station]]
+	id = 59
+	name = "津田沼"
+	pos = "(2825.33119, 1.87897)"
+
+[[Station]]
+	id = 60
+	name = "幕張本郷"
+	pos = "(3045.97328, 188.91358)"
+
+[[Station]]
+	id = 61
+	name = "幕張"
+	pos = "(3202.52846, 321.5506)"
+
+[[Station]]
+	id = 62
+	name = "新検見川"
+	pos = "(3353.89564, 398.64563)"
+
+[[Station]]
+	id = 63
+	name = "稲毛"
+	pos = "(3549.20814, 542.91748)"
+
+[[Station]]
+	id = 64
+	name = "西千葉"
+	pos = "(3656.9352, 689.17298)"
+
+[[Station]]
+	id = 65
+	name = "千葉"
+	pos = "(3751.99745, 781.29792)"
+
+[[Station]]
+	id = 66
+	name = "尾久"
+	pos = "(162.06215, -552.73987)"
+
+[[Station]]
+	id = 67
+	name = "赤羽"
+	pos = "(-167.06993, -864.70581)"
+
+[[Station]]
+	id = 68
+	name = "浦和"
+	pos = "(-805.34508, -1669.4162)"
+
+[[Station]]
+	id = 69
+	name = "さいたま新都心"
+	pos = "(-1040.48302, -2023.11493)"
+
+[[Station]]
+	id = 70
+	name = "大宮"
+	pos = "(-1135.85045, -2148.84735)"
+
+[[Station]]
+	id = 71
+	name = "土呂"
+	pos = "(-1054.97887, -2404.39392)"
+
+[[Station]]
+	id = 72
+	name = "東大宮"
+	pos = "(-973.49693, -2571.93542)"
+
+[[Station]]
+	id = 73
+	name = "蓮田"
+	pos = "(-846.23863, -2897.17651)"
+
+[[Station]]
+	id = 74
+	name = "白岡"
+	pos = "(-708.14659, -3261.82342)"
+
+[[Station]]
+	id = 75
+	name = "新白岡"
+	pos = "(-655.65636, -3471.74621)"
+
+[[Station]]
+	id = 76
+	name = "久喜"
+	pos = "(-603.62389, -3741.29272)"
+
+[[Station]]
+	id = 77
+	name = "東鷲宮"
+	pos = "(-585.16075, -3978.71948)"
+
+[[Station]]
+	id = 78
+	name = "栗橋"
+	pos = "(-434.5565, -4452.96264)"
+
+[[Station]]
+	id = 79
+	name = "古河"
+	pos = "(-279.06944, -5028.18084)"
+
+[[Station]]
+	id = 80
+	name = "野木"
+	pos = "(-29.13048, -5384.05395)"
+
+[[Station]]
+	id = 81
+	name = "間々田"
+	pos = "(233.93104, -5663.51867)"
+
+[[Station]]
+	id = 82
+	name = "小山"
+	pos = "(686.04896, -6211.91955)"
+
+[[Station]]
+	id = 83
+	name = "小金井"
+	pos = "(1046.0038, -6828.79425)"
+
+[[Station]]
+	id = 84
+	name = "自治医大"
+	pos = "(1168.83705, -7038.75519)"
+
+[[Station]]
+	id = 85
+	name = "石橋"
+	pos = "(1288.92372, -7449.52179)"
+
+[[Station]]
+	id = 86
+	name = "雀宮"
+	pos = "(1391.76796, -8022.90893)"
+
+[[Station]]
+	id = 87
+	name = "宇都宮"
+	pos = "(1607.52724, -8676.90063)"
+
+[[Station]]
+	id = 88
+	name = "岡本"
+	pos = "(2067.27455, -9066.26678)"
+
+[[Station]]
+	id = 89
+	name = "宝積寺"
+	pos = "(2418.53187, -9401.46423)"
+
+[[Station]]
+	id = 90
+	name = "氏家"
+	pos = "(2244.58168, -9901.41845)"
+
+[[Station]]
+	id = 91
+	name = "蒲須坂"
+	pos = "(2128.15712, -10291.70013)"
+
+[[Station]]
+	id = 92
+	name = "片岡"
+	pos = "(2080.24452, -10630.02563)"
+
+[[Station]]
+	id = 93
+	name = "矢板"
+	pos = "(1952.68104, -11149.93072)"
+
+[[Station]]
+	id = 94
+	name = "野崎"
+	pos = "(2201.09413, -11521.67297)"
+
+[[Station]]
+	id = 95
+	name = "西那須野"
+	pos = "(2487.5016, -11921.68213)"
+
+[[Station]]
+	id = 96
+	name = "那須塩原"
+	pos = "(2830.51918, -12404.01245)"
+
+[[Station]]
+	id = 97
+	name = "黒磯"
+	pos = "(3225.72182, -12785.71106)"
+
+[[Station]]
+	id = 98
+	name = "板橋"
+	pos = "(-181.26061, -538.77807)"
+
+[[Station]]
+	id = 99
+	name = "十条"
+	pos = "(-154.09996, -687.66571)"
+
+[[Station]]
+	id = 100
+	name = "北赤羽"
+	pos = "(-319.50523, -954.50378)"
+
+[[Station]]
+	id = 101
+	name = "浮間舟渡"
+	pos = "(-462.93785, -996.54175)"
+
+[[Station]]
+	id = 102
+	name = "戸田公園"
+	pos = "(-594.31603, -1163.51104)"
+
+[[Station]]
+	id = 103
+	name = "戸田"
+	pos = "(-680.98595, -1261.091)"
+
+[[Station]]
+	id = 104
+	name = "北戸田"
+	pos = "(-764.45152, -1353.25409)"
+
+[[Station]]
+	id = 105
+	name = "武蔵浦和"
+	pos = "(-908.3419, -1538.64837)"
+
+[[Station]]
+	id = 106
+	name = "中浦和"
+	pos = "(-1001.42052, -1622.11395)"
+
+[[Station]]
+	id = 107
+	name = "南与野"
+	pos = "(-1065.20226, -1758.98529)"
+
+[[Station]]
+	id = 108
+	name = "与野本町"
+	pos = "(-1115.70885, -1894.10187)"
+
+[[Station]]
+	id = 109
+	name = "北与野"
+	pos = "(-1091.1422, -1991.22406)"
+
+[[Station]]
+	id = 110
+	name = "与野"
+	pos = "(-985.55138, -1928.35785)"
+
+[[Station]]
+	id = 111
+	name = "北浦和"
+	pos = "(-916.88683, -1804.95239)"
+
+[[Station]]
+	id = 112
+	name = "南浦和"
+	pos = "(-685.10582, -1560.92621)"
+
+[[Station]]
+	id = 113
+	name = "蕨"
+	pos = "(-472.85606, -1364.01153)"
+
+[[Station]]
+	id = 114
+	name = "西川口"
+	pos = "(-333.23814, -1239.57611)"
+
+[[Station]]
+	id = 115
+	name = "川口"
+	pos = "(-201.70738, -1103.12439)"
+
+[[Station]]
+	id = 116
+	name = "東十条"
+	pos = "(-107.86583, -722.45575)"
+
+[[Station]]
+	id = 117
+	name = "王子"
+	pos = "(4.43886, -609.80774)"
+
+[[Station]]
+	id = 118
+	name = "上中里"
+	pos = "(81.34315, -557.24121)"
+
+[[Station]]
+	id = 119
+	name = "大井町"
+	pos = "(-27.90978, 852.97608)"
+
+[[Station]]
+	id = 120
+	name = "大森"
+	pos = "(-95.6588, 1026.5448)"
+
+[[Station]]
+	id = 121
+	name = "蒲田"
+	pos = "(-216.05064, 1290.40741)"
+
+[[Station]]
+	id = 122
+	name = "川崎"
+	pos = "(-401.59752, 1602.44965)"
+
+[[Station]]
+	id = 123
+	name = "鶴見"
+	pos = "(-614.91539, 1831.67481)"
+
+[[Station]]
+	id = 124
+	name = "新子安"
+	pos = "(-828.69103, 2044.91638)"
+
+[[Station]]
+	id = 125
+	name = "東神奈川"
+	pos = "(-1041.70372, 2135.17212)"
+
+[[Station]]
+	id = 126
+	name = "横浜"
+	pos = "(-1149.27818, 2253.61847)"
+
+[[Station]]
+	id = 127
+	name = "西大井"
+	pos = "(-159.13536, 899.40094)"
+
+[[Station]]
+	id = 128
+	name = "武蔵小杉"
+	pos = "(-780.01549, 1148.65326)"
+
+[[Station]]
+	id = 129
+	name = "新川崎"
+	pos = "(-661.60729, 1397.71485)"
+
+[[Station]]
+	id = 130
+	name = "保土ケ谷"
+	pos = "(-1379.6859, 2448.09174)"
+
+[[Station]]
+	id = 131
+	name = "東戸塚"
+	pos = "(-1808.45787, 2612.04743)"
+
+[[Station]]
+	id = 132
+	name = "戸塚"
+	pos = "(-2033.52501, 2911.23413)"
+
+[[Station]]
+	id = 133
+	name = "大船"
+	pos = "(-2065.1107, 3380.89966)"
+
+[[Line]]
+	name = "宇都宮線"
+
+	[[Line.Edge]]
+		idA = 19
+		idB = 66
+
+	[[Line.Edge]]
+		idA = 66
+		idB = 67
+
+	[[Line.Edge]]
+		idA = 67
+		idB = 68
+
+	[[Line.Edge]]
+		idA = 68
+		idB = 69
+
+	[[Line.Edge]]
+		idA = 69
+		idB = 70
+
+	[[Line.Edge]]
+		idA = 70
+		idB = 71
+
+	[[Line.Edge]]
+		idA = 71
+		idB = 72
+
+	[[Line.Edge]]
+		idA = 72
+		idB = 73
+
+	[[Line.Edge]]
+		idA = 73
+		idB = 74
+
+	[[Line.Edge]]
+		idA = 74
+		idB = 75
+
+	[[Line.Edge]]
+		idA = 75
+		idB = 76
+
+	[[Line.Edge]]
+		idA = 76
+		idB = 77
+
+	[[Line.Edge]]
+		idA = 77
+		idB = 78
+
+	[[Line.Edge]]
+		idA = 78
+		idB = 79
+
+	[[Line.Edge]]
+		idA = 79
+		idB = 80
+
+	[[Line.Edge]]
+		idA = 80
+		idB = 81
+
+	[[Line.Edge]]
+		idA = 81
+		idB = 82
+
+	[[Line.Edge]]
+		idA = 82
+		idB = 83
+
+	[[Line.Edge]]
+		idA = 83
+		idB = 84
+
+	[[Line.Edge]]
+		idA = 84
+		idB = 85
+
+	[[Line.Edge]]
+		idA = 85
+		idB = 86
+
+	[[Line.Edge]]
+		idA = 86
+		idB = 87
+
+	[[Line.Edge]]
+		idA = 87
+		idB = 88
+
+	[[Line.Edge]]
+		idA = 88
+		idB = 89
+
+	[[Line.Edge]]
+		idA = 89
+		idB = 90
+
+	[[Line.Edge]]
+		idA = 90
+		idB = 91
+
+	[[Line.Edge]]
+		idA = 91
+		idB = 92
+
+	[[Line.Edge]]
+		idA = 92
+		idB = 93
+
+	[[Line.Edge]]
+		idA = 93
+		idB = 94
+
+	[[Line.Edge]]
+		idA = 94
+		idB = 95
+
+	[[Line.Edge]]
+		idA = 95
+		idB = 96
+
+	[[Line.Edge]]
+		idA = 96
+		idB = 97
+
+[[Line]]
+	name = "JR山手線"
+
+	[[Line.Edge]]
+		idA = 0
+		idB = 1
+
+	[[Line.Edge]]
+		idA = 1
+		idB = 2
+
+	[[Line.Edge]]
+		idA = 2
+		idB = 3
+
+	[[Line.Edge]]
+		idA = 3
+		idB = 4
+
+	[[Line.Edge]]
+		idA = 4
+		idB = 5
+
+	[[Line.Edge]]
+		idA = 5
+		idB = 6
+
+	[[Line.Edge]]
+		idA = 6
+		idB = 7
+
+	[[Line.Edge]]
+		idA = 7
+		idB = 8
+
+	[[Line.Edge]]
+		idA = 8
+		idB = 9
+
+	[[Line.Edge]]
+		idA = 9
+		idB = 10
+
+	[[Line.Edge]]
+		idA = 10
+		idB = 11
+
+	[[Line.Edge]]
+		idA = 11
+		idB = 12
+
+	[[Line.Edge]]
+		idA = 12
+		idB = 13
+
+	[[Line.Edge]]
+		idA = 13
+		idB = 14
+
+	[[Line.Edge]]
+		idA = 14
+		idB = 15
+
+	[[Line.Edge]]
+		idA = 15
+		idB = 16
+
+	[[Line.Edge]]
+		idA = 16
+		idB = 17
+
+	[[Line.Edge]]
+		idA = 17
+		idB = 18
+
+	[[Line.Edge]]
+		idA = 18
+		idB = 19
+
+	[[Line.Edge]]
+		idA = 19
+		idB = 20
+
+	[[Line.Edge]]
+		idA = 20
+		idB = 21
+
+	[[Line.Edge]]
+		idA = 21
+		idB = 22
+
+	[[Line.Edge]]
+		idA = 22
+		idB = 23
+
+	[[Line.Edge]]
+		idA = 23
+		idB = 24
+
+	[[Line.Edge]]
+		idA = 24
+		idB = 25
+
+	[[Line.Edge]]
+		idA = 25
+		idB = 26
+
+	[[Line.Edge]]
+		idA = 26
+		idB = 27
+
+	[[Line.Edge]]
+		idA = 27
+		idB = 28
+
+	[[Line.Edge]]
+		idA = 29
+		idB = 0
+
+	[[Line.Edge]]
+		idA = 28
+		idB = 29
+
+[[Line]]
+	name = "JR中央・総武線"
+
+	[[Line.Edge]]
+		idA = 30
+		idB = 31
+
+	[[Line.Edge]]
+		idA = 31
+		idB = 32
+
+	[[Line.Edge]]
+		idA = 32
+		idB = 33
+
+	[[Line.Edge]]
+		idA = 33
+		idB = 34
+
+	[[Line.Edge]]
+		idA = 34
+		idB = 35
+
+	[[Line.Edge]]
+		idA = 35
+		idB = 36
+
+	[[Line.Edge]]
+		idA = 36
+		idB = 37
+
+	[[Line.Edge]]
+		idA = 37
+		idB = 38
+
+	[[Line.Edge]]
+		idA = 38
+		idB = 7
+
+	[[Line.Edge]]
+		idA = 7
+		idB = 6
+
+	[[Line.Edge]]
+		idA = 6
+		idB = 39
+
+	[[Line.Edge]]
+		idA = 39
+		idB = 40
+
+	[[Line.Edge]]
+		idA = 40
+		idB = 41
+
+	[[Line.Edge]]
+		idA = 41
+		idB = 42
+
+	[[Line.Edge]]
+		idA = 42
+		idB = 43
+
+	[[Line.Edge]]
+		idA = 43
+		idB = 44
+
+	[[Line.Edge]]
+		idA = 44
+		idB = 45
+
+	[[Line.Edge]]
+		idA = 45
+		idB = 21
+
+	[[Line.Edge]]
+		idA = 21
+		idB = 46
+
+	[[Line.Edge]]
+		idA = 46
+		idB = 47
+
+	[[Line.Edge]]
+		idA = 47
+		idB = 48
+
+	[[Line.Edge]]
+		idA = 48
+		idB = 49
+
+	[[Line.Edge]]
+		idA = 49
+		idB = 50
+
+	[[Line.Edge]]
+		idA = 50
+		idB = 51
+
+	[[Line.Edge]]
+		idA = 51
+		idB = 52
+
+	[[Line.Edge]]
+		idA = 52
+		idB = 53
+
+	[[Line.Edge]]
+		idA = 53
+		idB = 54
+
+	[[Line.Edge]]
+		idA = 54
+		idB = 55
+
+	[[Line.Edge]]
+		idA = 55
+		idB = 56
+
+	[[Line.Edge]]
+		idA = 56
+		idB = 57
+
+	[[Line.Edge]]
+		idA = 57
+		idB = 58
+
+	[[Line.Edge]]
+		idA = 58
+		idB = 59
+
+	[[Line.Edge]]
+		idA = 59
+		idB = 60
+
+	[[Line.Edge]]
+		idA = 60
+		idB = 61
+
+	[[Line.Edge]]
+		idA = 61
+		idB = 62
+
+	[[Line.Edge]]
+		idA = 62
+		idB = 63
+
+	[[Line.Edge]]
+		idA = 63
+		idB = 64
+
+	[[Line.Edge]]
+		idA = 64
+		idB = 65
+
+[[Line]]
+	name = "JR埼京線"
+
+	[[Line.Edge]]
+		idA = 0
+		idB = 3
+
+	[[Line.Edge]]
+		idA = 3
+		idB = 4
+
+	[[Line.Edge]]
+		idA = 4
+		idB = 7
+
+	[[Line.Edge]]
+		idA = 7
+		idB = 11
+
+	[[Line.Edge]]
+		idA = 11
+		idB = 98
+
+	[[Line.Edge]]
+		idA = 98
+		idB = 99
+
+	[[Line.Edge]]
+		idA = 99
+		idB = 67
+
+	[[Line.Edge]]
+		idA = 67
+		idB = 100
+
+	[[Line.Edge]]
+		idA = 100
+		idB = 101
+
+	[[Line.Edge]]
+		idA = 101
+		idB = 102
+
+	[[Line.Edge]]
+		idA = 102
+		idB = 103
+
+	[[Line.Edge]]
+		idA = 103
+		idB = 104
+
+	[[Line.Edge]]
+		idA = 104
+		idB = 105
+
+	[[Line.Edge]]
+		idA = 105
+		idB = 106
+
+	[[Line.Edge]]
+		idA = 106
+		idB = 107
+
+	[[Line.Edge]]
+		idA = 107
+		idB = 108
+
+	[[Line.Edge]]
+		idA = 108
+		idB = 109
+
+	[[Line.Edge]]
+		idA = 109
+		idB = 70
+
+[[Line]]
+	name = "JR京浜東北線"
+
+	[[Line.Edge]]
+		idA = 70
+		idB = 69
+
+	[[Line.Edge]]
+		idA = 69
+		idB = 110
+
+	[[Line.Edge]]
+		idA = 110
+		idB = 111
+
+	[[Line.Edge]]
+		idA = 111
+		idB = 68
+
+	[[Line.Edge]]
+		idA = 68
+		idB = 112
+
+	[[Line.Edge]]
+		idA = 112
+		idB = 113
+
+	[[Line.Edge]]
+		idA = 113
+		idB = 114
+
+	[[Line.Edge]]
+		idA = 114
+		idB = 115
+
+	[[Line.Edge]]
+		idA = 115
+		idB = 67
+
+	[[Line.Edge]]
+		idA = 67
+		idB = 116
+
+	[[Line.Edge]]
+		idA = 116
+		idB = 117
+
+	[[Line.Edge]]
+		idA = 117
+		idB = 118
+
+	[[Line.Edge]]
+		idA = 118
+		idB = 15
+
+	[[Line.Edge]]
+		idA = 15
+		idB = 16
+
+	[[Line.Edge]]
+		idA = 16
+		idB = 17
+
+	[[Line.Edge]]
+		idA = 17
+		idB = 18
+
+	[[Line.Edge]]
+		idA = 18
+		idB = 19
+
+	[[Line.Edge]]
+		idA = 19
+		idB = 20
+
+	[[Line.Edge]]
+		idA = 20
+		idB = 21
+
+	[[Line.Edge]]
+		idA = 21
+		idB = 22
+
+	[[Line.Edge]]
+		idA = 22
+		idB = 23
+
+	[[Line.Edge]]
+		idA = 23
+		idB = 24
+
+	[[Line.Edge]]
+		idA = 24
+		idB = 25
+
+	[[Line.Edge]]
+		idA = 25
+		idB = 26
+
+	[[Line.Edge]]
+		idA = 26
+		idB = 27
+
+	[[Line.Edge]]
+		idA = 27
+		idB = 29
+
+	[[Line.Edge]]
+		idA = 29
+		idB = 119
+
+	[[Line.Edge]]
+		idA = 119
+		idB = 120
+
+	[[Line.Edge]]
+		idA = 120
+		idB = 121
+
+	[[Line.Edge]]
+		idA = 121
+		idB = 122
+
+	[[Line.Edge]]
+		idA = 122
+		idB = 123
+
+	[[Line.Edge]]
+		idA = 123
+		idB = 124
+
+	[[Line.Edge]]
+		idA = 124
+		idB = 125
+
+	[[Line.Edge]]
+		idA = 125
+		idB = 126
+
+[[Line]]
+	name = "JR湘南新宿ライン"
+
+	[[Line.Edge]]
+		idA = 70
+		idB = 68
+
+	[[Line.Edge]]
+		idA = 67
+		idB = 11
+
+	[[Line.Edge]]
+		idA = 11
+		idB = 7
+
+	[[Line.Edge]]
+		idA = 7
+		idB = 4
+
+	[[Line.Edge]]
+		idA = 4
+		idB = 3
+
+	[[Line.Edge]]
+		idA = 3
+		idB = 0
+
+	[[Line.Edge]]
+		idA = 0
+		idB = 127
+
+	[[Line.Edge]]
+		idA = 127
+		idB = 128
+
+	[[Line.Edge]]
+		idA = 129
+		idB = 126
+
+	[[Line.Edge]]
+		idA = 126
+		idB = 130
+
+	[[Line.Edge]]
+		idA = 130
+		idB = 131
+
+	[[Line.Edge]]
+		idA = 131
+		idB = 132
+
+	[[Line.Edge]]
+		idA = 132
+		idB = 133
+
+	[[Line.Edge]]
+		idA = 128
+		idB = 129
+
+	[[Line.Edge]]
+		idA = 68
+		idB = 67
+
