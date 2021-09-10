@@ -1288,6 +1288,11 @@ namespace s3d
 			init(connectedGraph, GetDefaultRNG(), config);
 		}
 
+		LayoutForceDirected(const ConnectedGraph& connectedGraph, const ForceDirectedConfig& config, const HashTable<GraphEdge::IndexType, Vec2>& initialPositions)
+		{
+			init(connectedGraph, config, initialPositions);
+		}
+
 		template <class URBG>
 		void init(const ConnectedGraph& connectedGraph, URBG&& urbg, const ForceDirectedConfig& config)
 		{
@@ -1300,10 +1305,9 @@ namespace s3d
 			m_elapsedSec = 0.0;
 			m_converged = false;
 			m_failed = false;
+			m_originalNodeIndices = connectedGraph.m_originalIndices;
 
 			Array<detail::SparseEntry<float>> points(Arg::reserve = (connectedGraph.nodeCount() * 2));
-
-			m_originalNodeIndices = connectedGraph.m_originalIndices;
 
 			for (auto i : step(static_cast<GraphEdge::IndexType>(connectedGraph.nodeCount())))
 			{
@@ -1320,6 +1324,46 @@ namespace s3d
 			m_adjacencyMatrix = detail::SparseMat<float>{ connectedGraph.m_localEdges };
 
 			makeCoarseGraphSeries(std::forward<URBG>(urbg));
+
+			if (config.startImmediately)
+			{
+				update(-1);
+			}
+
+			setDefaultDrawArea();
+		}
+
+		void init(const ConnectedGraph& connectedGraph, const ForceDirectedConfig& config, const HashTable<GraphEdge::IndexType, Vec2>& initialPositions)
+		{
+			if (connectedGraph.isEmpty())
+			{
+				return;
+			}
+
+			m_config = config;
+			m_elapsedSec = 0.0;
+			m_converged = false;
+			m_failed = false;
+			m_originalNodeIndices = connectedGraph.m_originalIndices;
+
+			Array<detail::SparseEntry<float>> points(Arg::reserve = (connectedGraph.nodeCount() * 2));
+
+			for (auto i : step(static_cast<GraphEdge::IndexType>(connectedGraph.nodeCount())))
+			{
+				const Vec2 v = initialPositions.find(m_originalNodeIndices[i])->second;
+
+				points.emplace_back(0, i, v.x);
+				points.emplace_back(1, i, v.y);
+
+				m_activeNodeIndices.emplace(m_originalNodeIndices[i], i);
+			}
+
+			m_positions = detail::SparseMat<float>{ points };
+			m_oldPositions = m_positions;
+
+			m_adjacencyMatrix = detail::SparseMat<float>{ connectedGraph.m_localEdges };
+
+			prepareSimulation();
 
 			if (config.startImmediately)
 			{
